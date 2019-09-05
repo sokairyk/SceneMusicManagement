@@ -31,6 +31,9 @@ bld/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+# Jetbrains Rider Settings
+.idea/
+
 # NUNIT
 *.VisualState.xml
 TestResult.xml
