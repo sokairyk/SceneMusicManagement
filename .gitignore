@@ -34,6 +34,9 @@ bld/
 # Jetbrains Rider Settings
 .idea/
 
+# Linux directory settins
+.directory
+
 # NUNIT
 *.VisualState.xml
 TestResult.xml
