@@ -13,8 +13,6 @@ namespace CollectionManagementLib
         {
             if(!Directory.Exists(folderPath))
                 throw new DirectoryNotFoundException($"Directory path: '{folderPath}' was not found");
-
-            
         }
 
         private void ScanDirectory(string folderPath)
