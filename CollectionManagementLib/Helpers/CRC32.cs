@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace CollectionManagementLib
+namespace CollectionManagementLib.Helpers
 {
-    public static class CRC32
+    internal static class CRC32
     {
         private const UInt32 DefaultPolynomial = 0xedb88320u;
         private const UInt32 DefaultSeed = 0xffffffffu;
@@ -19,7 +20,7 @@ namespace CollectionManagementLib
             var createTable = new UInt32[256];
             for (var i = 0; i < 256; i++)
             {
-                var entry = (UInt32) i;
+                var entry = (UInt32)i;
                 for (var j = 0; j < 8; j++)
                     if ((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
@@ -40,7 +41,7 @@ namespace CollectionManagementLib
                 hash = (hash >> 8) ^ DefaultTable[buffer[i] ^ hash & 0xff];
             return hash;
         }
-        
+
         public static UInt32 Compute(byte[] buffer)
         {
             return ~CalculateHash(buffer);
