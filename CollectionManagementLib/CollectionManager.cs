@@ -1,30 +1,124 @@
 using CollectionManagementLib.Composite;
 using CollectionManagementLib.Interfaces;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace CollectionManagementLib
 {
-    public class CollectionManager
+    public class CollectionManager : IManager
     {
+        private IHashInfoHandler _hashInfoHandler;
         private IHashCheck _hashChecker;
-        public CollectionManager(IHashCheck hashChecker)
+        public FolderItem RootFolder { get; set; }
+
+        private static readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            TypeNameHandling = TypeNameHandling.Objects
+        };
+
+        public CollectionManager(IHashCheck hashChecker, IHashInfoHandler hashInfoHandler)
         {
             _hashChecker = hashChecker;
+            _hashInfoHandler = hashInfoHandler;
         }
 
-        public void GenerateStructure(string folderPath)
+        public void GenerateStructure()
         {
-            if (!Directory.Exists(folderPath))
+            if (RootFolder == null)
             {
-                Logging.Instance.Logger.Error($"Requested directory for scan: {folderPath} was not found");
+                Logging.Instance.Logger.Error($"Requested directory for scan is not set! Aborting...");
                 return;
             }
 
-            var test = new FolderItem(folderPath, null);
-            test.ScanCurrentPath(true);
+            RootFolder.Scan(true);
+        }
+
+        public string GenerateHash()
+        {
+            return GenerateHash(this.RootFolder, true);
+        }
+
+        private string GenerateHash(BaseComposite item, bool recursive = false, string innerFolderPathSegment = "")
+        {
+            var response = string.Empty;
+            innerFolderPathSegment = string.IsNullOrEmpty(innerFolderPathSegment) ? string.Empty : $"{innerFolderPathSegment}{Path.DirectorySeparatorChar}";
+
+            if (!item.Exists) return null;
+
+            if (item is FileItem)
+                response = $"{innerFolderPathSegment}{item.Name}   {_hashChecker.GetHash(item.FullPath)}";
+
+            if (item is FolderItem)
+            {
+                foreach (var child in item.Children.Where(c => c is FileItem))
+                    response += $"{GenerateHash(child, recursive)}\n";
+
+                if (recursive)
+                    foreach (var child in item.Children.Where(c => c is FolderItem))
+                        response += $"{GenerateHash(child, recursive, innerFolderPathSegment + child.Name)}{Environment.NewLine}";
+            }
+            return response;
+        }
+
+        public bool Validate()
+        {
+            var sfvFiles = this.RootFolder.Search("*.sfv", true);
+            var validityCheck = true;
+
+            foreach (var sfvFile in sfvFiles)
+            {
+                var parentFolder = sfvFile.Parent;
+
+                if (!_hashInfoHandler.ValidateFile(sfvFile.FullPath))
+                {
+                    Logging.Instance.Logger.Warn($"SFV file in {sfvFile.FullPath} is invalid! Skipping....");
+                    continue;
+                }
+
+                var sfvInfo = _hashInfoHandler.Parse(sfvFile.FullPath);
+                foreach (var sfvFileInfo in sfvInfo.Keys)
+                {
+                    var properpath = Path.Combine(sfvFile.Parent.FullPath, sfvFileInfo);
+
+                    if (!_hashChecker.Validate(properpath, sfvInfo[sfvFileInfo]))
+                    {
+                        Logging.Instance.Logger.Warn($@"File {sfvFileInfo} has invalid CRC according to sfv file {sfvFile.FullPath}.
+Expected CRC: {sfvInfo[sfvFileInfo]} | Calculated CRC: {_hashChecker.GetHash(sfvFileInfo)}");
+                        validityCheck = false;
+                    }
+                }
+            }
+
+            return validityCheck;
+        }
+
+        public void Refresh()
+        {
+            this.RootFolder.Refresh(true);
+        }
+
+        public string SerializeStructure()
+        {
+            return JsonConvert.SerializeObject(this.RootFolder, _serializerSettings);
+        }
+
+        public bool DeserializeStructure(string input)
+        {
+            try
+            {
+                this.RootFolder = JsonConvert.DeserializeObject<FolderItem>(input, _serializerSettings);
+            }
+            catch (Exception ex)
+            {
+                this.RootFolder = null;
+                Logging.Instance.Logger.Error("CollectionManager deserialization error!", ex);
+            }
+
+            return this.RootFolder != null;
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.StaticFiles;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace CollectionManagementLib.Composite
 {
@@ -50,6 +48,14 @@ namespace CollectionManagementLib.Composite
         public FileItem(string fullpath, BaseComposite parent) : base(fullpath, parent)
         {
 
+        }
+
+        public new void Refresh(bool recursive = false)
+        {
+            this._exists = null;
+            this._extension = null;
+            this._mimeType = null;
+            (this as BaseComposite).Refresh(recursive);
         }
     }
 }

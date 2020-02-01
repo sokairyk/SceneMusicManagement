@@ -1,7 +1,5 @@
-﻿using CollectionManagementLib;
-using CollectionManagementLib.Factory;
-using System;
-using System.IO;
+﻿using CollectionManagementLib.Composite;
+using CollectionManagementLib.Factories;
 
 namespace ConsoleTesting
 {
@@ -10,7 +8,9 @@ namespace ConsoleTesting
         static void Main(string[] args)
         {
             var collectionManager = new ManagerFactory().GetManager();
-            collectionManager.GenerateStructure(@"D:\Sok\SceneMusicManagement-master\CollectionManagementLib");
+            collectionManager.RootFolder = new FolderItem(@"D:\Sokairyk\SceneMusicManagement\Data", null);
+            collectionManager.GenerateStructure();
+
         }
     }
 }

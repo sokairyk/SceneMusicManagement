@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectionManagementLib", "CollectionManagementLib\CollectionManagementLib.csproj", "{ED025634-8C50-4E8D-87D6-3AE6547BEAFB}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CollectionManagementLib", "CollectionManagementLib\CollectionManagementLib.csproj", "{ED025634-8C50-4E8D-87D6-3AE6547BEAFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTesting", "ConsoleTesting\ConsoleTesting.csproj", "{842FE85D-8227-42AE-B809-ADE7C80EA681}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTesting", "ConsoleTesting\ConsoleTesting.csproj", "{842FE85D-8227-42AE-B809-ADE7C80EA681}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicManagementLib", "MusicManagementLib\MusicManagementLib.csproj", "{BC1DCC53-4025-4A09-91D9-95DC25C70A4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +23,15 @@ Global
 		{842FE85D-8227-42AE-B809-ADE7C80EA681}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{842FE85D-8227-42AE-B809-ADE7C80EA681}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{842FE85D-8227-42AE-B809-ADE7C80EA681}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC1DCC53-4025-4A09-91D9-95DC25C70A4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC1DCC53-4025-4A09-91D9-95DC25C70A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC1DCC53-4025-4A09-91D9-95DC25C70A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC1DCC53-4025-4A09-91D9-95DC25C70A4F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F8BF0065-6210-4469-A7E8-42B559A15F82}
 	EndGlobalSection
 EndGlobal

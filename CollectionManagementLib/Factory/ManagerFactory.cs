@@ -1,22 +1,20 @@
-﻿using CollectionManagementLib.Factory;
-using CollectionManagementLib.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using CollectionManagementLib.Interfaces;
 using Unity;
 
-namespace CollectionManagementLib.Factory
+namespace CollectionManagementLib.Factories
 {
     public class ManagerFactory : BaseFactory
     {
         internal override void RegisterInterfaces()
         {
             Container.RegisterType<IHashCheck, HashCheckCRC>();
+            Container.RegisterType<IHashInfoHandler, HashInfoHandlerSFV>();
+            Container.RegisterType<IManager, CollectionManager>();
         }
 
-        public CollectionManager GetManager()
+        public IManager GetManager()
         {
-            return new CollectionManager(Container.Resolve<IHashCheck>());
+            return Container.Resolve<IManager>();
         }
     }
 

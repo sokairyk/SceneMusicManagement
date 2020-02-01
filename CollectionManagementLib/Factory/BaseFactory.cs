@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Unity;
+﻿using Unity;
 
-namespace CollectionManagementLib.Factory
+namespace CollectionManagementLib.Factories
 {
     public abstract class BaseFactory
     {

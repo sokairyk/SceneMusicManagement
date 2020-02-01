@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CollectionManagementLib.Helpers
+﻿namespace CollectionManagementLib.Helpers
 {
     public enum HashType
     {
