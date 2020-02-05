@@ -73,19 +73,16 @@ namespace CollectionManagementLib.Composite
                     continue;
                 }
 
-                switch (entryAttributes)
-                {
-                    case FileAttributes.Directory:
-                        _children.Add(new FolderItem(systemEntry, this));
-                        break;
-                    case FileAttributes.Archive:
-                    case FileAttributes.Normal:
-                        _children.Add(new FileItem(systemEntry, this));
-                        break;
-                    default:
-                        Logging.Instance.Logger.Warn($"WARNING: System item \"{systemEntry}\" is not supported. Skipping...");
-                        break;
-                }
+
+                if ((entryAttributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    _children.Add(new FolderItem(systemEntry, this));
+                else if ((entryAttributes & FileAttributes.Normal) == FileAttributes.Normal
+                        ||
+                        (entryAttributes & FileAttributes.Archive) == FileAttributes.Archive)
+                    _children.Add(new FileItem(systemEntry, this));
+                else
+                    Logging.Instance.Logger.Warn($"WARNING: System item \"{systemEntry}\" is not supported. Skipping...");
+
             }
 
             if (recursive) Children.AsParallel().ForAll(c => c.Scan(true));
@@ -111,7 +108,7 @@ namespace CollectionManagementLib.Composite
 
             var regexPattern = new Regex(pattern, RegexOptions.Compiled & RegexOptions.IgnoreCase);
             var results = Search(regexPattern, this, null, recursive);
-            
+
             return results;
         }
 
