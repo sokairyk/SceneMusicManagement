@@ -52,9 +52,9 @@ namespace CollectionManagementLib.Composite
 
         public new void Refresh(bool recursive = false)
         {
-            this._exists = null;
-            this._extension = null;
-            this._mimeType = null;
+            _exists = null;
+            _extension = null;
+            _mimeType = null;
             (this as BaseComposite).Refresh(recursive);
         }
     }

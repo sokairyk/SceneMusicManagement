@@ -1,8 +1,13 @@
-using CollectionManagementLib;
+﻿using CollectionManagementLib;
 using CollectionManagementLib.Composite;
 using CollectionManagementLib.Factories;
+using Microsoft.Extensions.Configuration;
+using MusicManagementLib.Helpers;
 using System;
+using System.Configuration;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace ConsoleTesting
 {
@@ -10,8 +15,23 @@ namespace ConsoleTesting
     {
         static void Main(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Path.Combine(AppContext.BaseDirectory))
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var test2 = config.Providers.FirstOrDefault();
+
+            IConfigurationProvider aaa = test2;
+
+            aaa.TryGet("CLEMENTINE_DB_PATH", out var iii);
+
+            var eeee = iii;
+
+            var test =  ConfigurationManager.AppSettings["CLEMENTINE_DB_PATH"];
+
             var collectionManager = new ManagerFactory().GetManager();
-            collectionManager.RootFolder = new FolderItem(@"D:\Sokairyk\SceneMusicManagement\Data", null);
+            collectionManager.RootFolder = new FolderItem(@"G:\Downloads\Torrents\Hitman 2\Hitman.2-CPY", null);
             collectionManager.GenerateStructure();
             var counter = new Stopwatch();
             counter.Start();

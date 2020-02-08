@@ -1,9 +1,10 @@
-﻿using CollectionManagementLib.Helpers;
+﻿using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace CollectionManagementLib.Composite
@@ -26,12 +27,13 @@ namespace CollectionManagementLib.Composite
         protected List<BaseComposite> _children { get; set; }
         public IEnumerable<BaseComposite> Children { get => _children?.AsReadOnly(); }
 
-        private static readonly char[] _invalidFilenameChars = BaseComposite.CustomInvalidChars();
+        private static readonly char[] _invalidFilenameChars = CustomInvalidChars();
+        private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public BaseComposite(string fullpath, BaseComposite parent, List<BaseComposite> children = null)
         {
             if (fullpath == null)
-                throw new NullReferenceException("ERROR: Cannot initialize a BaseComposite instance with a null path");
+                throw new NullReferenceException("Cannot initialize a BaseComposite instance with a null path");
 
             Name = fullpath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Last();
             FullPath = fullpath;
@@ -41,19 +43,18 @@ namespace CollectionManagementLib.Composite
 
         public void Scan(bool recursive = false)
         {
-            if (!IsDirectory)
+            Scanned = true;
+            ScannedOn = DateTime.Now;
+
+            if (!Exists)
             {
-                Scanned = true;
-                ScannedOn = DateTime.Now;
+                _logger.Warn($"{FullPath} was not found!");
                 return;
             }
 
-            if (!Directory.Exists(FullPath))
-            {
-                Logging.Instance.Logger.Warn($"WARNING: Directory \"{FullPath}\" was not found!");
-                return;
-            }
+            if (!IsDirectory) return;
 
+            var folderNotScannedOrEmpty = _children.Count == 0;
             foreach (var systemEntry in Directory.GetFileSystemEntries(FullPath))
             {
                 var entryAttributes = File.GetAttributes(systemEntry);
@@ -67,8 +68,8 @@ namespace CollectionManagementLib.Composite
                         (entryAttributes != FileAttributes.Directory
                          && sameFullPathChildren.SingleOrDefault(c => c.FullPath == systemEntry && !c.IsDirectory) != null)))
                 {
-                    if (!Scanned)
-                        Logging.Instance.Logger.Warn($"WARNING: Directory \"{FullPath}\" already contains a {(entryAttributes == FileAttributes.Directory ? "folder" : "file")} child entry: \"{systemEntry}\". Skipping...");
+                    if (folderNotScannedOrEmpty)
+                        _logger.Warn($"Directory \"{Name}\" already contains a {(entryAttributes == FileAttributes.Directory ? "folder" : "file")} child entry: \"{systemEntry}\". Skipping...");
 
                     continue;
                 }
@@ -81,54 +82,59 @@ namespace CollectionManagementLib.Composite
                         (entryAttributes & FileAttributes.Archive) == FileAttributes.Archive)
                     _children.Add(new FileItem(systemEntry, this));
                 else
-                    Logging.Instance.Logger.Warn($"WARNING: System item \"{systemEntry}\" is not supported. Skipping...");
+                        _logger.Warn($"System item type \"{systemEntry}\" found in \"{FullPath}\" is not supported. Skipping...");
 
             }
+
+            Scanned = true;
+            ScannedOn = DateTime.Now;
 
             if (recursive) Children.AsParallel().ForAll(c => c.Scan(true));
         }
 
         public virtual void Refresh(bool recursive = false)
         {
-            if (!this.Exists)
+            if (!Exists)
             {
                 _children.Clear();
-                this.Parent?._children?.Remove(this);
+                Parent?._children?.Remove(this);
                 return;
             }
 
             if (recursive) _children.AsParallel().ForAll(c => c.Refresh());
         }
 
-        public IEnumerable<BaseComposite> Search(string pattern, bool recursive = false)
+        public HashSet<BaseComposite> Search(string pattern, bool recursive = false)
         {
-            //Sanitize search input and apply regex match only for wildcards
-            pattern = string.Join("", pattern.Split(_invalidFilenameChars, StringSplitOptions.RemoveEmptyEntries));
-            pattern = string.Join("[0-9a-zA-Z].", pattern.Split("*", StringSplitOptions.None).Select(p => Regex.Escape(p)));
+            var results = new HashSet<BaseComposite>();
+            var searchTerms = pattern.Split(" \t", StringSplitOptions.RemoveEmptyEntries);
 
-            var regexPattern = new Regex(pattern, RegexOptions.Compiled & RegexOptions.IgnoreCase);
-            var results = Search(regexPattern, this, null, recursive);
+            foreach (var term in searchTerms)
+            {
+                //Sanitize search input and apply regex match only for wildcards
+                var processedTerm = string.Join("", term.Split(_invalidFilenameChars, StringSplitOptions.RemoveEmptyEntries));
+                processedTerm = string.Join("[0-9a-zA-Z]*", processedTerm.Split("*", StringSplitOptions.None).Select(p => Regex.Escape(p)));
+
+                var regexPattern = new Regex(processedTerm, RegexOptions.Compiled & RegexOptions.IgnoreCase);
+                Search(regexPattern, this, null, recursive).Select(r => results.Add(r));
+            }
 
             return results;
         }
 
-        protected static IEnumerable<BaseComposite> Search(Regex pattern, BaseComposite item, HashSet<BaseComposite> results, bool recursive)
+        protected static HashSet<BaseComposite> Search(Regex pattern, BaseComposite item, HashSet<BaseComposite> results, bool recursive)
         {
             //Initialize if needed
             results = results ?? new HashSet<BaseComposite>();
 
-            if (!item.IsDirectory)
-            {
-                if (pattern.IsMatch(item.Name))
-                    results.Add(item);
-            }
+            if (!item.IsDirectory && pattern.IsMatch(item.Name))
+                results.Add(item);
             else
             {
-                foreach (var match in item.Children.Where(c => pattern.IsMatch(c.Name)))
-                    results.Add(match);
+                item.Children.Where(c => pattern.IsMatch(c.Name)).Select(r => results.Add(r));
+
                 if (recursive)
-                    foreach (var match in item.Children.Flatten(c => Search(pattern, c, null, recursive)))
-                        results.Add(match);
+                    item.Children.SelectMany(c => Search(pattern, c, null, recursive)).Select(r => results.Add(r));
             }
 
             return results;

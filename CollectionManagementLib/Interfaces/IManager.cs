@@ -1,4 +1,5 @@
 ﻿using CollectionManagementLib.Composite;
+using System.Threading.Tasks;
 
 namespace CollectionManagementLib.Interfaces
 {
@@ -6,10 +7,12 @@ namespace CollectionManagementLib.Interfaces
     {
         FolderItem RootFolder { get; set; }
         void GenerateStructure();
-        string GenerateHash();
-        bool Validate();
-        void Refresh();
         string SerializeStructure();
         bool DeserializeStructure(string input);
+        void Refresh();
+        string GenerateHash();
+        Task<string> GenerateHashAsync();
+        bool Validate();
+        Task<bool> ValidateAsync();
     }
 }

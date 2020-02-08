@@ -6,13 +6,13 @@ namespace CollectionManagementLib.Helpers
 {
     internal static class CRC32
     {
-        private const uint DefaultPolynomial = 0xedb88320u;
-        private const uint DefaultSeed = 0xffffffffu;
-        private static uint[] DefaultTable;
+        private const uint _defaultPolynomial = 0xedb88320u;
+        private const uint _defaultSeed = 0xffffffffu;
+        private static uint[] _defaultTable;
 
         static CRC32()
         {
-            DefaultTable = InitializeTable(DefaultPolynomial);
+            _defaultTable = InitializeTable(_defaultPolynomial);
         }
 
         private static uint[] InitializeTable(uint polynomial)
@@ -36,9 +36,9 @@ namespace CollectionManagementLib.Helpers
         {
             var start = 0;
             var size = buffer.Length;
-            var hash = previousHashCalculation ?? DefaultSeed;
+            var hash = previousHashCalculation ?? _defaultSeed;
             for (var i = start; i < start + size; i++)
-                hash = (hash >> 8) ^ DefaultTable[buffer[i] ^ hash & 0xff];
+                hash = (hash >> 8) ^ _defaultTable[buffer[i] ^ hash & 0xff];
             return hash;
         }
     }

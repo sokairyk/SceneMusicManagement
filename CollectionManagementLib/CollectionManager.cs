@@ -1,9 +1,12 @@
 using CollectionManagementLib.Composite;
 using CollectionManagementLib.Interfaces;
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace CollectionManagementLib
 {
@@ -11,6 +14,8 @@ namespace CollectionManagementLib
     {
         private IHashInfoHandler _hashInfoHandler;
         private IHashCheck _hashChecker;
+        private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public FolderItem RootFolder { get; set; }
 
         private static readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
@@ -30,7 +35,7 @@ namespace CollectionManagementLib
         {
             if (RootFolder == null)
             {
-                Logging.Instance.Logger.Error($"Requested directory for scan is not set! Aborting...");
+                _logger.Error($"Requested directory for scan is not set! Aborting...");
                 return;
             }
 
@@ -75,7 +80,7 @@ namespace CollectionManagementLib
 
                 if (!_hashInfoHandler.ValidateFile(sfvFile.FullPath))
                 {
-                    Logging.Instance.Logger.Warn($"SFV file in {sfvFile.FullPath} is invalid! Skipping....");
+                    _logger.Warn($"SFV file in {sfvFile.FullPath} is invalid! Skipping....");
                     continue;
                 }
 
@@ -86,7 +91,7 @@ namespace CollectionManagementLib
 
                     if (!_hashChecker.Validate(properpath, sfvInfo[sfvFileInfo]))
                     {
-                        Logging.Instance.Logger.Warn($@"File {sfvFileInfo} has invalid CRC according to sfv file {sfvFile.FullPath}.
+                        _logger.Warn($@"File {sfvFileInfo} has invalid CRC according to sfv file {sfvFile.FullPath}.
 Expected CRC: {sfvInfo[sfvFileInfo]} | Calculated CRC: {_hashChecker.GetHash(sfvFileInfo)}");
                         validityCheck = false;
                     }
@@ -115,10 +120,20 @@ Expected CRC: {sfvInfo[sfvFileInfo]} | Calculated CRC: {_hashChecker.GetHash(sfv
             catch (Exception ex)
             {
                 this.RootFolder = null;
-                Logging.Instance.Logger.Error("CollectionManager deserialization error!", ex);
+                _logger.Error("CollectionManager deserialization error!", ex);
             }
 
             return this.RootFolder != null;
+        }
+
+        public Task<string> GenerateHashAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> ValidateAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

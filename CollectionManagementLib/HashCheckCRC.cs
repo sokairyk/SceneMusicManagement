@@ -1,8 +1,10 @@
 ﻿using CollectionManagementLib.Helpers;
 using CollectionManagementLib.Interfaces;
+using log4net;
 using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CollectionManagementLib
@@ -12,6 +14,7 @@ namespace CollectionManagementLib
         private const int CHUNK_SIZE = 5000000;
         private static byte[] _readBuffer = new byte[CHUNK_SIZE];
         public HashType HashAlgorithm => HashType.CRC32;
+        private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public string GetHash(string filepath)
         {
@@ -22,7 +25,7 @@ namespace CollectionManagementLib
         {
             if (!File.Exists(filepath))
             {
-                Logging.Instance.Logger.Warn($"Requested file in {filepath} for CRC verification was not found.");
+                _logger.Warn($"Requested file in {filepath} for CRC verification was not found.");
                 return null;
             }
 

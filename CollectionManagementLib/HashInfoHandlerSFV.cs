@@ -1,6 +1,8 @@
 ﻿using CollectionManagementLib.Interfaces;
+using log4net;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace CollectionManagementLib
@@ -10,12 +12,13 @@ namespace CollectionManagementLib
         public string HashInfoExtension => "sfv";
         private const string LINE_VAlIDATION_PATTERN = "([^;\\n\\r]*)( |\\t)+([A-Fa-f0-9]{8}).*";
         private static readonly Regex _lineValidationRegex = new Regex(LINE_VAlIDATION_PATTERN, RegexOptions.Compiled & RegexOptions.Multiline);
+        private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public bool ValidateFile(string filepath)
         {
             if (!File.Exists(filepath))
             {
-                Logging.Instance.Logger.Warn($"Requested SFV info file: {filepath} was not found.");
+                _logger.Warn($"Requested SFV info file: {filepath} was not found.");
                 return false;
             }
 
@@ -33,7 +36,7 @@ namespace CollectionManagementLib
         {
             if (!File.Exists(filepath))
             {
-                Logging.Instance.Logger.Warn($"Requested SFV info file: {filepath} was not found.");
+                _logger.Warn($"Requested SFV info file: {filepath} was not found.");
                 return null;
             }
 
@@ -48,7 +51,7 @@ namespace CollectionManagementLib
                     result.Add(lineValidation.Groups[1].Value, lineValidation.Groups[3].Value);
                 }
             }
-            
+
             return result;
         }
     }
