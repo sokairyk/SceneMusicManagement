@@ -28,5 +28,10 @@ namespace CollectionManagementLib.Helpers
             return Encoding.ASCII.GetString(raw);
         }
 
+        public static TimeSpan ToUnixEpoch(this DateTime dateTime)
+        {
+            return dateTime.Subtract(new DateTime(1970, 1, 1));
+        }
+
     }
 }
