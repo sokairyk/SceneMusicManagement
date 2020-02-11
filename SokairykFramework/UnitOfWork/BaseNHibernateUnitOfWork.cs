@@ -1,5 +1,5 @@
 ﻿using NHibernate;
-using SokairykFramework.UnitOfWork;
+using SokairykFramework.Configuration;
 
 namespace SokairykFramework.UnitOfWork
 {
@@ -8,10 +8,14 @@ namespace SokairykFramework.UnitOfWork
         private ITransaction _transaction;
         private static ISessionFactory _sessionFactory;
 
+        protected IConfigurationManager _configurationManager;
+
         public ISession Session { get; set; }
 
-        public BaseNHibernateUnitOfWork()
+        public BaseNHibernateUnitOfWork(IConfigurationManager configurationManager)
         {
+            _configurationManager = configurationManager;
+
             if (_sessionFactory == null)
                 _sessionFactory = BuildSessionFactory();
             Session = _sessionFactory.OpenSession();

@@ -1,7 +1,10 @@
-﻿using MusicManagementLib.DAL.DTO;
+﻿
+using MusicManagementLib.DAL.ClementineDTO;
+using MusicManagementLib.DAL.Repository;
 using MusicManagementLib.Repository;
 using SokairykFramework.Configuration;
 using System;
+using System.Linq;
 
 namespace ConsoleTesting
 {
@@ -9,17 +12,16 @@ namespace ConsoleTesting
     {
         private static void Main(string[] args)
         {
-            var res = new ConfigurationManager().GetApplicationSetting("CLEMENTINE_DB_PATH");
+            var di = new DependencyInjectionManager();
 
-            var aaa = new ClementineUnitOfWork();
-
-            var uow = new ClementineRepository<ClementineSong>(aaa);
-            aaa.BeginTransaction();
-
-            var test = uow.GetAll();
+            using (var repo = di.ResolveInterface<ClementineRepository<ClementineSong>>())
+            {
+                var test = repo.GetAll().Where(s => s.Title.Contains("ein")).ToList();
+                
+            }
 
             //var collectionManager = new ManagerFactory().GetManager();
-            //collectionManager.RootFolder = new FolderItem(@"G:\Downloads\Torrents\Hitman 2\Hitman.2-CPY", null);
+            //collectionManager.RootFolder = new FolderItem(@"G:\Downloads\", null);
             //collectionManager.GenerateStructure();
             //var counter = new Stopwatch();
             //counter.Start();

@@ -1,16 +1,14 @@
 using NHibernate.Mapping.ByCode.Conformist;
 
-
-namespace MusicManagementLib.DAL.DTO
+namespace MusicManagementLib.DAL.ClementineDTO
 {
     public class ClementineSongMapping : ClassMapping<ClementineSong>
     {
         public ClementineSongMapping()
         {
-            Schema("master");
             Table("songs");
             Lazy(true);
-            Id(x => x.Filename, map => map.Column("filename"));
+            Id(x => x.Filename);
             Property(x => x.Title);
             Property(x => x.Album);
             Property(x => x.Artist);

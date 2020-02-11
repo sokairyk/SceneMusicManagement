@@ -1,5 +1,4 @@
 ﻿using NHibernate;
-using SokairykFramework.UnitOfWork;
 using System;
 using System.Linq;
 
@@ -12,9 +11,20 @@ namespace SokairykFramework.UnitOfWork
         {
             _unitOfWork = (BaseNHibernateUnitOfWork)unitOfWork;
         }
-        
-        protected ISession Session { get; /*{ return _unitOfWork.Session; }*/ set; }
-        //protected ISession Session => _unitOfWork.Session;
+
+        private ISession _session;
+        protected ISession Session
+        {
+            get
+            {
+                _session = _session ?? _unitOfWork.Session;
+                return _session;
+            }
+            private set
+            {
+                _session = value;
+            }
+        }
 
         public IQueryable<T> GetAll()
         {
@@ -29,6 +39,7 @@ namespace SokairykFramework.UnitOfWork
         public void Create(T entity)
         {
             Session.Save(entity);
+            _unitOfWork.Commit();
         }
 
         public void Update(T entity)
@@ -48,11 +59,6 @@ namespace SokairykFramework.UnitOfWork
         }
 
         #region Dispose
-
-        ~BaseNHibernateRepository()
-        {
-            Dispose(false);
-        }
 
         public void Dispose()
         {

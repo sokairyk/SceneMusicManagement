@@ -1,4 +1,4 @@
-namespace MusicManagementLib.DAL.DTO
+namespace MusicManagementLib.DAL.ClementineDTO
 {
     public class ClementineSong
     {
@@ -14,14 +14,14 @@ namespace MusicManagementLib.DAL.DTO
         public virtual string Genre { get; set; }
         public virtual string Comment { get; set; }
         public virtual int? Compilation { get; set; }
-        public virtual int? Length { get; set; }
+        public virtual long? Length { get; set; }
         public virtual int? Bitrate { get; set; }
         public virtual int? Samplerate { get; set; }
         public virtual int Directory { get; set; }
         public virtual string Filename { get; set; }
-        public virtual int Mtime { get; set; }
-        public virtual int Ctime { get; set; }
-        public virtual int Filesize { get; set; }
+        public virtual long Mtime { get; set; }
+        public virtual long Ctime { get; set; }
+        public virtual long Filesize { get; set; }
         public virtual int Sampler { get; set; }
         public virtual string ArtAutomatic { get; set; }
         public virtual string ArtManual { get; set; }
