@@ -1,12 +1,9 @@
-﻿using CollectionManagementLib.Composite;
+﻿using CollectionManagementLib.FileStructure;
 using MusicManagementLib.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MusicManagementLib.Domain
 {
-    
+
     public class Song
     {
         public string Title { get; set; }

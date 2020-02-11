@@ -1,5 +1,5 @@
 ﻿using ATL;
-using CollectionManagementLib.Composite;
+using CollectionManagementLib.FileStructure;
 using System.IO;
 
 namespace MusicManagementLib.Helpers

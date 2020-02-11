@@ -1,6 +1,5 @@
 namespace MusicManagementLib.DAL.DTO
 {
-
     public class ClementineSong
     {
         public virtual string Title { get; set; }

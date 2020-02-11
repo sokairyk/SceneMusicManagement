@@ -7,13 +7,15 @@
   <ItemGroup>
     <PackageReference Include="FluentNHibernate" Version="2.1.2" />
     <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="3.1.1" />
     <PackageReference Include="NHibernate" Version="5.2.7" />
-    <PackageReference Include="sqlite" Version="3.13.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.112" />
     <PackageReference Include="z440.atl.core" Version="2.16.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CollectionManagementLib\CollectionManagementLib.csproj" />
+    <ProjectReference Include="..\SokairykFramework\SokairykFramework.csproj" />
   </ItemGroup>
 
 </Project>
