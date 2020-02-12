@@ -1,8 +1,5 @@
-﻿
-using MusicManagementLib.DAL.ClementineDTO;
-using MusicManagementLib.DAL.Repository;
-using MusicManagementLib.Repository;
-using SokairykFramework.Configuration;
+﻿using MusicManagementLib.DAL.ClementineDTO;
+using SokairykFramework.Repository;
 using System;
 using System.Linq;
 
@@ -14,10 +11,9 @@ namespace ConsoleTesting
         {
             var di = new DependencyInjectionManager();
 
-            using (var repo = di.ResolveInterface<ClementineRepository<ClementineSong>>())
+            using (var repo = di.ResolveInterface<IRepositoryWithUnitOfWork>("Clementine"))
             {
-                var test = repo.GetAll().Where(s => s.Title.Contains("ein")).ToList();
-                
+                var test = repo.GetAll<ClementineSong>().Where(s => s.Title.Contains("drip")).SingleOrDefault();
             }
 
             //var collectionManager = new ManagerFactory().GetManager();

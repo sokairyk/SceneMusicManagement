@@ -1,9 +1,7 @@
-﻿using MusicManagementLib.DAL.ClementineDTO;
-using MusicManagementLib.DAL.Repository;
-using MusicManagementLib.Repository;
+﻿using MusicManagementLib.Repository;
 using SokairykFramework.Configuration;
 using SokairykFramework.DependencyInjection;
-using SokairykFramework.UnitOfWork;
+using SokairykFramework.Repository;
 using Unity;
 
 namespace ConsoleTesting
@@ -13,9 +11,7 @@ namespace ConsoleTesting
         protected override void RegisterInterfaces()
         {
             _container.RegisterType<IConfigurationManager, ConfigurationManager>();
-            _container.RegisterType<IUnitOfWork, ClementineUnitOfWork>();
-            _container.RegisterType<IClementineRepository<ClementineSong>, ClementineRepository<ClementineSong>>();
+            _container.RegisterType<IRepositoryWithUnitOfWork, ClementineRepository>("Clementine");
         }
-
     }
 }
