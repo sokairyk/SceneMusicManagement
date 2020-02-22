@@ -6,19 +6,31 @@ namespace SokairykFramework.Configuration
 {
     public class ConfigurationManager : IConfigurationManager
     {
-        private static readonly IConfigurationRoot _config;
-        private static IConfigurationProvider _configurationProvider => _config.Providers.FirstOrDefault();
+        private readonly IConfigurationRoot _config;
+        private IConfigurationProvider _configurationProvider => _config?.Providers?.FirstOrDefault();
 
-        static ConfigurationManager()
+        public ConfigurationManager(string jsonFile)
         {
-            _config = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory)
-                                                .AddJsonFile("appsettings.json", true, true)
-                                                .Build();
+            var config = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory);
+
+            if (!string.IsNullOrWhiteSpace(jsonFile))
+                config.AddJsonFile(jsonFile, true, true);
+            try
+            {
+                _config = config.Build();
+            }
+            catch (Exception ex)
+            {
+                _config = null;
+            }
         }
 
         public string GetApplicationSetting(string setting)
         {
-            _configurationProvider.TryGet(setting, out var value);
+            string value = null;
+            if (_configurationProvider != null)
+                _configurationProvider.TryGet(setting, out value);
+
             return value;
         }
     }
