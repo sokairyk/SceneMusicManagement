@@ -32,16 +32,10 @@ namespace SokairykFramework.Tests
 }";
             var jsonInvalidSettings = @"{ This is not a valid = :json file { ; tis super messed up [0], 2 } ";
 
-            try
-            {
-                File.WriteAllText(_appSettingsPath, jsonSettings);
-                File.WriteAllText(_invalidAppSettingsPath, jsonInvalidSettings);
-                File.Copy(_appSettingsPath, _reloadedAppSettingsPath);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"Could not write the AppSettings files in {AppContext.BaseDirectory}");
-            }
+            File.WriteAllText(_appSettingsPath, jsonSettings);
+            File.WriteAllText(_invalidAppSettingsPath, jsonInvalidSettings);
+            File.Copy(_appSettingsPath, _reloadedAppSettingsPath);
+
         }
 
 
@@ -53,7 +47,7 @@ namespace SokairykFramework.Tests
                 DeleteSettingsFiles();
                 CreateSettingsFiles();
             }
-            catch (Exception ex)
+            catch
             {
                 Assert.Fail($"Could not delete/create the AppSettings files in {AppContext.BaseDirectory}");
             }
@@ -62,14 +56,8 @@ namespace SokairykFramework.Tests
         [TearDown]
         public void Cleanup()
         {
-            try
-            {
-                DeleteSettingsFiles();
-            }
-            catch (Exception ex)
-            {
-
-            }
+            try { DeleteSettingsFiles(); }
+            catch { }
         }
 
         [Test]
@@ -129,7 +117,7 @@ namespace SokairykFramework.Tests
                         sw.WriteLine(lineSettings[i]);
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Assert.Fail($"Could not update the AppSettings file in {AppContext.BaseDirectory}");
             }

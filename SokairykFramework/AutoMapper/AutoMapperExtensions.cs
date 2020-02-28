@@ -10,7 +10,7 @@ namespace SokairykFramework.AutoMapper
 {
     public static class AutoMapperExtensions
     {
-        class ManualProfile : Profile
+        internal class ManualProfile : Profile
         {
             public ManualProfile()
             {
@@ -29,7 +29,7 @@ namespace SokairykFramework.AutoMapper
                 var manualProfile = new ManualProfile();
                 cfg.AddProfile(manualProfile);
 
-                foreach (var configuratorType in ReflectionExtensions.FindTypeInAssemblies(t => t.GetInterfaces().Any(i => i == typeof(IAutoMapperConfigurator))))
+                foreach (var configuratorType in ReflectionExtensions.FindTypeInAssemblies(t => t.GetInterfaces().Any(i => i == typeof(IAutoMapperConfigurator)), assemblyPaths))
                 {
                     var configuratorInstance = (IAutoMapperConfigurator)Activator.CreateInstance(configuratorType);
                     configuratorInstance.ManualConfiguration(manualProfile);

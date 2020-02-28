@@ -1,7 +1,9 @@
-﻿using CollectionManagementLib.FileStructure;
+﻿using AutoMapper;
+using CollectionManagementLib.FileStructure;
 using CollectionManagementLib.Manager;
 using MusicManagementLib.DAL.ClementineDTO;
 using MusicManagementLib.Domain;
+using MusicManagementLib.Helpers;
 using SokairykFramework.AutoMapper;
 using SokairykFramework.Configuration;
 using SokairykFramework.Extensions;
@@ -15,25 +17,17 @@ namespace ConsoleTesting
     {
         private static void Main(string[] args)
         {
-
-
-            var config = AutoMapperExtensions.CreateConfig();
-            var mapper = config.CreateMapper();
-            
-
-            var song = new Song { Title = "Loud and Clear", Artist = new Artist { Name = "Cranberries" }, Album = new Album { Name = "Bury the Hatchet" } };
-            var clemSong = mapper.Map<Song, ClementineSong>(song);
-
-
             var di = new DependencyInjectionManager();
-
+            var mapper = di.ResolveInterface<IMapper>();
+            
             var cf = di.ResolveInterface<IConfigurationManager>();
-            var tst = cf.GetApplicationSetting("CLEMENTINE_DB_PATH");
 
             using (var repo = di.ResolveInterface<IRepositoryWithUnitOfWork>("Clementine"))
             {
                 var test = repo.GetAll<ClementineSong>().Where(s => s.Title.Contains("ein")).SingleOrDefault();
             }
+
+            var sng = @"D:\Sokairyk\SceneMusicManagement\Data\Die_Krupps-The_Machinists_of_Joy-2CD-Limited_Edition-DE-2013-FWYH\103_die_krupps-risikofaktor.mp3";
 
             //var collectionManager = new ManagerFactory().GetManager();
             //collectionManager.RootFolder = new FolderItem(@"D:\Sokairyk\SceneMusicManagement\Data", null);

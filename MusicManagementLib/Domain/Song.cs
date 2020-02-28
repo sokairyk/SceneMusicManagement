@@ -11,17 +11,13 @@ namespace MusicManagementLib.Domain
     {
         public string Title { get; set; }
         public int TrackNumber { get; set; }
+        public int DiscNumber { get; set; }
         public string FileName { get; set; }
         public Artist Artist { get; set; }
         public Album Album { get; set; }
 
-        public FileItem FileInfo { get; }
+        private FileItem FileInfo { get; }
         public ID3TagReader TagReader { get; }
-
-        public Song()
-        {
-
-        }
 
         public Song(FileItem fileItem)
         {
@@ -29,11 +25,20 @@ namespace MusicManagementLib.Domain
             TagReader = new ID3TagReader(fileItem?.FullPath);
         }
 
-        class SongMapperConfig : IAutoMapperConfigurator
+        class Song2ClementineSongMapperConfig : IAutoMapperConfigurator
         {
             public void ManualConfiguration(IProfileExpression cfg)
             {
-                cfg.CreateMappings((Song m) => (new ClementineSong { Album = m.Album.Name, Title = m.Title, Artist = m.Artist.Name }));
+                cfg.CreateMappings((Song m) => new ClementineSong
+                {
+                    Album = m.Album != null ? m.Album.Name : string.Empty,
+                    Title = m.Title,
+                    Artist = m.Artist != null ? m.Artist.Name : string.Empty,
+                    Track = m.TrackNumber,
+                    Disc = m.DiscNumber,
+                    Bpm = -1,
+                    Year = m.Album != null ? m.Album.Year : 0
+                });
             }
         }
 

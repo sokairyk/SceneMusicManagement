@@ -1,9 +1,11 @@
 ﻿using MusicManagementLib.Repository;
+using SokairykFramework.AutoMapper;
 using SokairykFramework.Configuration;
 using SokairykFramework.DependencyInjection;
 using SokairykFramework.Repository;
 using Unity;
 using Unity.Injection;
+using Unity.Lifetime;
 
 namespace ConsoleTesting
 {
@@ -13,7 +15,7 @@ namespace ConsoleTesting
         {
             _container.RegisterType<IConfigurationManager, ConfigurationManager>(new InjectionConstructor("appsettings.json"));
             _container.RegisterType<IRepositoryWithUnitOfWork, ClementineRepository>("Clementine");
-
+            _container.RegisterFactory<AutoMapper.IMapper>(f => AutoMapperExtensions.CreateConfig().CreateMapper(), new SingletonLifetimeManager());
         }
     }
 }
