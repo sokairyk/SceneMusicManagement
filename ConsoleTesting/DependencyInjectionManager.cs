@@ -14,7 +14,7 @@ namespace ConsoleTesting
         protected override void RegisterInterfaces()
         {
             _container.RegisterType<IConfigurationManager, ConfigurationManager>(new InjectionConstructor("appsettings.json"));
-            _container.RegisterType<IRepositoryWithUnitOfWork, ClementineRepository>("Clementine");
+            _container.RegisterType<IDataService, ClementineService>("Clementine");
             _container.RegisterFactory<AutoMapper.IMapper>(f => AutoMapperExtensions.CreateConfig().CreateMapper(), new SingletonLifetimeManager());
         }
     }

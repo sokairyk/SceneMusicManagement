@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SokairykFramework.Repository
 {
-    public class NHibernateRepository : IRepository
+    public class NHibernateRepository : IRepository, IDisposable
     {
         public ISession Session { get; set; }
 

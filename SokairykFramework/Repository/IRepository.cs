@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace SokairykFramework.Repository
 {
-    public interface IRepository : IDisposable
+    public interface IRepository
     {
         IQueryable<T> GetAll<T>();
         T GetById<T>(object id);

@@ -11,9 +11,9 @@ using System.Reflection;
 
 namespace MusicManagementLib.Repository
 {
-    public class ClementineRepository : NHibernateRepositoryWithUnitOfWork
+    public class ClementineService : NHibernateDataService
     {
-        public ClementineRepository(IConfigurationManager configurationManager) : base(configurationManager)
+        public ClementineService(IConfigurationManager configurationManager) : base(configurationManager)
         {
 
         }
