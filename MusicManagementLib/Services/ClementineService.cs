@@ -3,9 +3,7 @@ using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Mapping.ByCode;
 using SokairykFramework.Configuration;
-using SokairykFramework.Extensions;
 using SokairykFramework.Repository;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 

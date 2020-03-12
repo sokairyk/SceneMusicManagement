@@ -1,6 +1,7 @@
 ﻿using NHibernate;
 using SokairykFramework.Configuration;
 using System;
+using System.Threading;
 
 namespace SokairykFramework.Repository
 {
@@ -10,13 +11,14 @@ namespace SokairykFramework.Repository
         protected static IConfigurationManager _configurationManager;
         private NHibernateRepository _repository;
         private NHibernateUnitOfWork _unitOfWork;
-        private ISession _currentSession;
+        private static ISession _commonSession;
+        private static readonly object lockToken = new object();
 
         public IRepository Repository
         {
             get
             {
-                OpenCommonSession();
+                SetCommonSession();
                 return _repository;
             }
         }
@@ -25,7 +27,7 @@ namespace SokairykFramework.Repository
         {
             get
             {
-                OpenCommonSession();
+                SetCommonSession();
                 return _unitOfWork;
             }
         }
@@ -41,36 +43,27 @@ namespace SokairykFramework.Repository
 
         public abstract ISessionFactory BuildSessionFactory();
 
-        private void OpenCommonSession()
+        private void SetCommonSession()
         {
-            if (_currentSession?.IsConnected == true && _currentSession?.IsOpen == true) return;
+            if (_commonSession?.IsConnected == true && _commonSession?.IsOpen == true) return;
 
-            _currentSession?.Dispose();
-            _currentSession = _sessionFactory.OpenSession();
-            _unitOfWork.Session = _currentSession;
-            _repository.Session = _currentSession;
+            _commonSession?.Dispose();
+            _commonSession = _sessionFactory.OpenSession();
+            _repository.Session = _unitOfWork.Session = _commonSession;
         }
 
-        public void ExecuteInSeparateUnitOfWork(Action<IRepository> action)
+        public void ExecuteInUnitOfWork(Action<IRepository> action)
         {
-            //Get a new session and create an new unit of work
-            using (var newSession = _sessionFactory.OpenSession())
-            using (var newUnitOfWork = new NHibernateUnitOfWork())
+            lock (lockToken)
             {
-                //Since the repository is going to be used assing there
-                //the new session
-                _repository.Session = newSession;
-                //..and also to the new UnitOfWork
-                newUnitOfWork.Session = newSession;
-                newUnitOfWork.BeginTransaction();
-                //Execute the action using the private property of avoid
-                //triggering the getter and the OpenCommonSession function
-                action(_repository);
-                newUnitOfWork.Commit();
-            }
+                if (_commonSession?.Transaction?.IsActive == true)
+                    throw new Exception("An existing transaction is already in progress. Cannot execute action.");
 
-            //Restore to the repository it's previous session
-            _repository.Session = _currentSession;
+                SetCommonSession();
+                _unitOfWork.BeginTransaction();
+                action(_repository);
+                _unitOfWork.Commit();
+            }
         }
     }
 }

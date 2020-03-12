@@ -1,30 +1,29 @@
 ﻿using NHibernate;
-using SokairykFramework.Configuration;
 using System;
 
 namespace SokairykFramework.Repository
 {
-    public class NHibernateUnitOfWork : IUnitOfWork
+    public class NHibernateUnitOfWork : IUnitOfWork, IDisposable
     {
         public ISession Session { get; set; }
-        private ITransaction _transaction;
 
         public void BeginTransaction()
         {
-            _transaction = Session.BeginTransaction();
+            if (!Session.Transaction.IsActive)
+                Session.BeginTransaction();
         }
 
         public void Commit()
         {
             try
             {
-                if ((_transaction?.IsActive).Value)
-                    _transaction.Commit();
+                if (Session.Transaction.IsActive)
+                    Session.Transaction.Commit();
             }
             catch
             {
-                if ((_transaction?.IsActive).Value)
-                    _transaction.Rollback();
+                if (Session.Transaction.IsActive)
+                    Session.Transaction.Rollback();
 
                 throw;
             }
@@ -38,8 +37,8 @@ namespace SokairykFramework.Repository
         {
             try
             {
-                if ((_transaction?.IsActive).Value)
-                    _transaction.Rollback();
+                if (Session.Transaction.IsActive)
+                    Session.Transaction.Rollback();
             }
             finally
             {

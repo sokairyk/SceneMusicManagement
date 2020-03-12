@@ -2,7 +2,7 @@
 
 namespace SokairykFramework.Repository
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
         void BeginTransaction();
         void Commit();

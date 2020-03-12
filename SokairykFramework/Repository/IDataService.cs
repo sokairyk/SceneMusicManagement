@@ -7,6 +7,6 @@ namespace SokairykFramework.Repository
         IRepository Repository { get; }
         IUnitOfWork UnitOfWork { get; }
 
-        void ExecuteInSeparateUnitOfWork(Action<IRepository> action);
+        void ExecuteInUnitOfWork(Action<IRepository> action);
     }
 }

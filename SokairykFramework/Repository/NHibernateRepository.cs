@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SokairykFramework.Repository
 {
-    public class NHibernateRepository : IRepository, IDisposable
+    public class NHibernateRepository : IRepository
     {
         public ISession Session { get; set; }
 
@@ -36,12 +36,6 @@ namespace SokairykFramework.Repository
         public void Delete<T>(object id)
         {
             Session.Delete(Session.Load<T>(id));
-        }
-
-        public void Dispose()
-        {
-            Session?.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }
