@@ -31,7 +31,7 @@ namespace MusicManagementLib.DAL.ClementineDTO
         public virtual int? Rating { get; set; }
         public virtual int ForcedCompilationOn { get; set; }
         public virtual int ForcedCompilationOff { get; set; }
-        public virtual string EffectiveCompilation { get; set; }
+        public virtual int EffectiveCompilation { get; set; }
         public virtual int Skipcount { get; set; }
         public virtual int Score { get; set; }
         public virtual int Beginning { get; set; }

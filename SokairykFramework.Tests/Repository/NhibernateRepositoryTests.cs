@@ -21,6 +21,9 @@ namespace SokairykFramework.Tests.Repository
         [SetUp]
         public void Setup()
         {
+            if (File.Exists(_tempDBPath))
+                File.Delete(_tempDBPath);
+
             var config = new NHibernate.Cfg.Configuration()
                         .DataBaseIntegration(db =>
                         {
@@ -67,7 +70,7 @@ namespace SokairykFramework.Tests.Repository
         {
             var dataService = new TestDataService(null);
             var newEntry = new TestEntity { Id = 1, TextField = "This is a test", PrecisionField = 56.31m };
-            var newEntry2 = new TestEntity { Id = 2, TextField = "This is another test"};
+            var newEntry2 = new TestEntity { Id = 2, TextField = "This is another test" };
 
             Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 0);
 
@@ -167,7 +170,7 @@ namespace SokairykFramework.Tests.Repository
 
             workerThread.Join();
             slowerWorkerThread.Join();
-            
+
             Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 2);
         }
     }
