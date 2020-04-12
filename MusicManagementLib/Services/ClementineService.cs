@@ -16,7 +16,7 @@ namespace MusicManagementLib.Repository
 
         }
 
-        public override ISessionFactory BuildSessionFactory()
+        protected override ISessionFactory BuildSessionFactory()
         {
             var config = new Configuration()
                         .DataBaseIntegration(db =>

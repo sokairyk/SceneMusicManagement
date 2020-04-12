@@ -1,6 +1,7 @@
 ﻿using NHibernate;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SokairykFramework.Repository
 {
@@ -13,29 +14,30 @@ namespace SokairykFramework.Repository
             return Session.Query<T>();
         }
 
-        public T GetById<T>(object id)
+        public async Task<T> GetByIdAsync<T>(object id)
         {
-            return Session.Get<T>(id);
+            
+            return await Session.GetAsync<T>(id);
         }
 
-        public void Create<T>(T entity)
+        public async Task CreateAsync<T>(T entity)
         {
-            Session.Save(entity);
+            await Session.SaveAsync(entity);
         }
 
-        public void Update<T>(T entity)
+        public async Task UpdateAsync<T>(T entity)
         {
-            Session.Update(entity);
+            await Session.UpdateAsync(entity);
         }
 
-        public void Delete<T>(T entity)
+        public async Task DeleteAsync<T>(T entity)
         {
-            Session.Delete(entity);
+            await Session.DeleteAsync(entity);
         }
 
-        public void Delete<T>(object id)
+        public async Task DeleteAsync<T>(object id)
         {
-            Session.Delete(Session.Load<T>(id));
+            await Session.DeleteAsync(await Session.LoadAsync<T>(id));
         }
     }
 }

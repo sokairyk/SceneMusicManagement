@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace SokairykFramework.Repository
 {
@@ -7,6 +8,6 @@ namespace SokairykFramework.Repository
         IRepository Repository { get; }
         IUnitOfWork UnitOfWork { get; }
 
-        void ExecuteInUnitOfWork(Action<IRepository> action);
+        Task ExecuteInUnitOfWorkAsync(Action<IRepository> action);
     }
 }

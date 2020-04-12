@@ -2,6 +2,7 @@
 using SokairykFramework.Configuration;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SokairykFramework.Repository
 {
@@ -12,7 +13,7 @@ namespace SokairykFramework.Repository
         private NHibernateRepository _repository;
         private NHibernateUnitOfWork _unitOfWork;
         private static ISession _commonSession;
-        private static readonly object lockToken = new object();
+        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public IRepository Repository
         {
@@ -41,7 +42,7 @@ namespace SokairykFramework.Repository
 
         }
 
-        public abstract ISessionFactory BuildSessionFactory();
+        protected abstract ISessionFactory BuildSessionFactory();
 
         private void SetCommonSession()
         {
@@ -52,18 +53,31 @@ namespace SokairykFramework.Repository
             _repository.Session = _unitOfWork.Session = _commonSession;
         }
 
-        public void ExecuteInUnitOfWork(Action<IRepository> action)
+        public async Task ExecuteInUnitOfWorkAsync(Action<IRepository> action)
         {
-            lock (lockToken)
-            {
-                if (_commonSession?.Transaction?.IsActive == true)
-                    throw new Exception("An existing transaction is already in progress. Cannot execute action.");
+            Exception excpetionToRethrow = null;
 
+            if (_commonSession?.Transaction?.IsActive == true)
+                throw new Exception("An existing transaction is already in progress. Cannot execute action.");
+
+            await semaphoreSlim.WaitAsync();
+            try
+            {
                 SetCommonSession();
                 _unitOfWork.BeginTransaction();
                 action(_repository);
-                _unitOfWork.Commit();
+                await _unitOfWork.CommitAsync();
+            }catch(Exception ex)
+            {
+                excpetionToRethrow = ex;
             }
+            finally
+            {
+                semaphoreSlim.Release();
+            }
+
+            if (excpetionToRethrow != null)
+                throw excpetionToRethrow;
         }
     }
 }

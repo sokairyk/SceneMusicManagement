@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SokairykFramework.Tests.Repository
 {
@@ -59,14 +60,14 @@ namespace SokairykFramework.Tests.Repository
             {
             }
 
-            public override ISessionFactory BuildSessionFactory()
+            protected override ISessionFactory BuildSessionFactory()
             {
                 return _sessionFactory;
             }
         }
 
         [Test]
-        public void UnitOfWorkTest()
+        public async Task UnitOfWorkTest()
         {
             var dataService = new TestDataService(null);
             var newEntry = new TestEntity { Id = 1, TextField = "This is a test", PrecisionField = 56.31m };
@@ -75,38 +76,38 @@ namespace SokairykFramework.Tests.Repository
             Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 0);
 
             //With no transaction started there should be nothing to be commited
-            dataService.Repository.Create(newEntry);
-            dataService.UnitOfWork.Commit();
+            await dataService.Repository.CreateAsync(newEntry);
+            await dataService.UnitOfWork.CommitAsync();
             Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 0);
 
             //With proper use of begin / commit there should be no issue
             dataService.UnitOfWork.BeginTransaction();
-            dataService.Repository.Create(newEntry);
-            dataService.UnitOfWork.Commit();
+            await dataService.Repository.CreateAsync(newEntry);
+            await dataService.UnitOfWork.CommitAsync();
             Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 1);
 
             //After commit is executed nothing else should be persisted
-            dataService.Repository.Delete(newEntry);
-            dataService.UnitOfWork.Commit();
+            await dataService.Repository.DeleteAsync(newEntry);
+            await dataService.UnitOfWork.CommitAsync();
             Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 1);
 
             //...until a new begin transaction is initiated
             dataService.UnitOfWork.BeginTransaction();
-            dataService.Repository.Delete(newEntry);
-            dataService.UnitOfWork.Commit();
+            await dataService.Repository.DeleteAsync(newEntry);
+            await dataService.UnitOfWork.CommitAsync();
             Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 0);
 
             //Using ExecuteInUnitOfWork with an open transaction
             //in any thread should result in an exception
             dataService.UnitOfWork.BeginTransaction();
 
-            Action<TestEntity> executeInUnitOfWorkAction = (TestEntity ent) =>
+            Action<TestEntity> executeInUnitOfWorkAction = async (TestEntity ent) =>
             {
                 try
                 {
-                    dataService.ExecuteInUnitOfWork(repository =>
+                    await dataService.ExecuteInUnitOfWorkAsync(async repository =>
                     {
-                        repository.Create(ent);
+                        await repository.CreateAsync(ent);
                     });
                     Assert.Fail("Should have raised an exception");
                 }
@@ -131,15 +132,15 @@ namespace SokairykFramework.Tests.Repository
 
             //Commit to dispose the open tranaction and open a new one
             //when needed
-            dataService.UnitOfWork.Commit();
+            await dataService.UnitOfWork.CommitAsync();
 
-            executeInUnitOfWorkAction = (TestEntity ent) =>
+            executeInUnitOfWorkAction = async (TestEntity ent) =>
             {
                 try
                 {
-                    dataService.ExecuteInUnitOfWork(repository =>
+                    await dataService.ExecuteInUnitOfWorkAsync(async repository =>
                     {
-                        repository.Create(ent);
+                        await repository.CreateAsync(ent);
                     });
                 }
                 catch (Exception ex)

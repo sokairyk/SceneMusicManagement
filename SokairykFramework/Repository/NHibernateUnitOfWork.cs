@@ -1,5 +1,6 @@
 ﻿using NHibernate;
 using System;
+using System.Threading.Tasks;
 
 namespace SokairykFramework.Repository
 {
@@ -13,17 +14,17 @@ namespace SokairykFramework.Repository
                 Session.BeginTransaction();
         }
 
-        public void Commit()
+        public async Task CommitAsync()
         {
             try
             {
                 if (Session.Transaction.IsActive)
-                    Session.Transaction.Commit();
+                    await Session.Transaction.CommitAsync();
             }
             catch
             {
                 if (Session.Transaction.IsActive)
-                    Session.Transaction.Rollback();
+                    await Session.Transaction.RollbackAsync();
 
                 throw;
             }
@@ -33,12 +34,12 @@ namespace SokairykFramework.Repository
             }
         }
 
-        public void Rollback()
+        public async Task RollbackAsync()
         {
             try
             {
                 if (Session.Transaction.IsActive)
-                    Session.Transaction.Rollback();
+                    await Session.Transaction.RollbackAsync();
             }
             finally
             {

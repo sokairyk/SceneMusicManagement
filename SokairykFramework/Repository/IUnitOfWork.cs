@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace SokairykFramework.Repository
 {
     public interface IUnitOfWork
     {
         void BeginTransaction();
-        void Commit();
-        void Rollback();
+        Task CommitAsync();
+        Task RollbackAsync();
     }
 }
