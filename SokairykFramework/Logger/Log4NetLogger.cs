@@ -1,8 +1,10 @@
 ﻿using log4net;
 using log4net.Config;
+using SokairykFramework.Extensions;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 
 namespace SokairykFramework.Logger
@@ -30,12 +32,14 @@ namespace SokairykFramework.Logger
                 else
                 {
                     //...else try to load the default configuration from the embeded resource
-                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("log4net.config.default"))
+                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("SokairykFramework.Logger.log4net.config.default"))
                     using (var reader = new StreamReader(stream))
                     {
                         var defaultConfiguration = reader.ReadToEnd();
+                        //Save the default configuration file for next run
                         File.WriteAllText(logConfiguration, defaultConfiguration);
-                        var log4netDefaultConfig = GetXmlElement(defaultConfiguration);
+                        //Load the default configuration
+                        var log4netDefaultConfig = GetXmlElement(defaultConfiguration.RemoveByteOrderMark());
                         XmlConfigurator.Configure(logRepository, log4netDefaultConfig);
                     }
                 }

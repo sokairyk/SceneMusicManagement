@@ -5,12 +5,10 @@ namespace CollectionManagementLib.Manager
 {
     public interface IManager
     {
-        FolderItem RootFolder { get; set; }
+        void SetCollectionPath(string path);
         void GenerateStructure();
         string SerializeStructure();
         bool DeserializeStructure(string input);
         void Refresh();
-        Task<string> GenerateHashAsync();
-        Task<bool> ValidateAsync();
     }
 }

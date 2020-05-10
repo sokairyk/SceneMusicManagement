@@ -18,10 +18,10 @@ namespace MusicManagementLib.Domain
         public string FileName { get; set; }
         public Artist Artist { get; set; }
         public Album Album { get; set; }
-        public ID3TagReader ID3Tag { get; }
+        protected ID3TagReader ID3Tag { get; }
 
         private FileInfo _fileInformation;
-        public FileInfo FileInformation
+        protected FileInfo FileInformation
         {
             get
             {

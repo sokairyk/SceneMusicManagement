@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using NHibernate.Util;
 using SokairykFramework.Logger;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CollectionManagementLib.FileStructure
 {
@@ -13,8 +15,9 @@ namespace CollectionManagementLib.FileStructure
     {
         protected static ILogger _logger;
         private static readonly char[] _invalidFilenameChars = CustomInvalidChars();
+        private static ParallelOptions _parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 4 };
 
-        public readonly string Name;
+    public readonly string Name;
         [JsonProperty]
         public readonly string FullPath;
         public virtual bool IsDirectory => true;
@@ -37,7 +40,7 @@ namespace CollectionManagementLib.FileStructure
             Name = fullpath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Last();
             FullPath = fullpath;
             Parent = parent;
-            _children = children ?? new List<BaseComposite>();
+            _children = children ?? (IsDirectory ? new List<BaseComposite>() : null);
         }
 
         public void Scan(bool recursive = false)
@@ -84,7 +87,7 @@ namespace CollectionManagementLib.FileStructure
 
             }
 
-            if (recursive) Children.AsParallel().ForAll(c => c.Scan(true));
+            if (recursive) Parallel.ForEach(Children, _parallelOptions, c => { c.Scan(true); });
         }
 
         public virtual void Refresh(bool recursive = false)
@@ -96,7 +99,7 @@ namespace CollectionManagementLib.FileStructure
                 return;
             }
 
-            if (recursive) _children.AsParallel().ForAll(c => c.Refresh());
+            if (recursive) Parallel.ForEach(_children, _parallelOptions, c => { c.Scan(true); });
         }
 
         public HashSet<BaseComposite> Search(string pattern, bool recursive = false)
