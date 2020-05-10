@@ -1,6 +1,9 @@
-﻿using NHibernate;
+using NHibernate;
+using NHibernate.Mapping;
 using SokairykFramework.Configuration;
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -57,17 +60,22 @@ namespace SokairykFramework.Repository
         {
             Exception excpetionToRethrow = null;
 
-            if (_commonSession?.Transaction?.IsActive == true)
-                throw new Exception("An existing transaction is already in progress. Cannot execute action.");
-
             await semaphoreSlim.WaitAsync();
+
+            if (_commonSession?.Transaction?.IsActive == true)
+            {
+                semaphoreSlim.Release();
+                throw new Exception("An existing transaction is already in progress. Cannot execute action.");
+            }
+
             try
             {
                 SetCommonSession();
                 _unitOfWork.BeginTransaction();
                 action(_repository);
                 await _unitOfWork.CommitAsync();
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 excpetionToRethrow = ex;
             }

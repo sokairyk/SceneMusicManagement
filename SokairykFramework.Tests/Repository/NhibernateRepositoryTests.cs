@@ -161,7 +161,7 @@ namespace SokairykFramework.Tests.Repository
 
             var slowerWorkerThread = new Thread(() =>
             {
-                Thread.Sleep(100);
+                Thread.Sleep(10);
                 executeInUnitOfWorkAction(newEntry2);
                 Thread.Sleep(1000);
             });
