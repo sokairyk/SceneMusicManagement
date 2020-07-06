@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1000
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CollectionManagementLib", "CollectionManagementLib\CollectionManagementLib.csproj", "{ED025634-8C50-4E8D-87D6-3AE6547BEAFB}"
 EndProject
@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicManagementLib", "Music
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SokairykFramework", "SokairykFramework\SokairykFramework.csproj", "{7B100378-4549-43FD-84D8-32E671F3F543}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SokairykFramework.Tests", "SokairykFramework.Tests\SokairykFramework.Tests.csproj", "{03AC7B6F-7659-4A2B-8F5F-4DDD8D984FD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SokairykFramework.Tests", "SokairykFramework.Tests\SokairykFramework.Tests.csproj", "{03AC7B6F-7659-4A2B-8F5F-4DDD8D984FD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectionManagerGUI", "CollectionManagerGUI\CollectionManagerGUI.csproj", "{C5D35E72-3201-4030-A243-DFB6E947D971}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{03AC7B6F-7659-4A2B-8F5F-4DDD8D984FD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03AC7B6F-7659-4A2B-8F5F-4DDD8D984FD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03AC7B6F-7659-4A2B-8F5F-4DDD8D984FD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5D35E72-3201-4030-A243-DFB6E947D971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5D35E72-3201-4030-A243-DFB6E947D971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5D35E72-3201-4030-A243-DFB6E947D971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5D35E72-3201-4030-A243-DFB6E947D971}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,6 @@
 ﻿using CollectionManagementLib.Manager;
 using MusicManagementLib.DAL.ClementineDTO;
+using MusicManagementLib.Helpers;
 using SokairykFramework.Configuration;
 using SokairykFramework.Diagnostics;
 using SokairykFramework.Repository;
