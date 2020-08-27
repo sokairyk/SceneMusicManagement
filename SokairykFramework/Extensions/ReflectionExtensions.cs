@@ -8,7 +8,7 @@ using System.Runtime.Loader;
 namespace SokairykFramework.Extensions
 {
 
-#if NETCOREAPP3_0 || NETCOREAPP3_1
+#if NETCOREAPP3_1
     internal class InspectiveAssemblyLoadContext : AssemblyLoadContext
     {
         public InspectiveAssemblyLoadContext() : base(isCollectible: true) { }
@@ -23,7 +23,7 @@ namespace SokairykFramework.Extensions
     {
         private static readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private static readonly string[] _assemblyExtensions = new[] { "dll", "exe" };
-#if NETCOREAPP3_0 || NETCOREAPP3_1
+#if NETCOREAPP3_1
         private static readonly InspectiveAssemblyLoadContext _inspectiveAssemblyLoadContext = new InspectiveAssemblyLoadContext();
 #endif
 
@@ -48,14 +48,22 @@ namespace SokairykFramework.Extensions
                 //Load from stream to avoid assembly file locking
                 using (var filestream = new FileStream(assemblyPath, FileMode.Open, FileAccess.Read))
                 {
-#if NETCOREAPP3_0 || NETCOREAPP3_1
-                    _inspectiveAssemblyLoadContext.LoadFromStream(filestream);
+                    try
+                    {
+
+#if NETCOREAPP3_1
+                        _inspectiveAssemblyLoadContext.LoadFromStream(filestream);
 #else
-                    AssemblyLoadContext.Default.LoadFromStream(filestream);
+                        AssemblyLoadContext.Default.LoadFromStream(filestream);
 #endif
+                    }
+                    catch (BadImageFormatException ex)
+                    {
+                        // Supress exceptions from incompatible files
+                    }
                 }
             }
-            
+
             var matchedTypes = AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.IsDynamic)
                                             .SelectMany(a => a.GetTypes().Where(t =>
                                             {
@@ -63,7 +71,7 @@ namespace SokairykFramework.Extensions
                                                 catch { return false; }
                                             }));
 
-#if NETCOREAPP3_0 || NETCOREAPP3_1
+#if NETCOREAPP3_1
             //TODO: Test this line by instantiating a resolved type after a context unload
             _inspectiveAssemblyLoadContext.Unload();
 #endif
