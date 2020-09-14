@@ -10,21 +10,23 @@ namespace SokairykFramework.Repository
 
         public void BeginTransaction()
         {
-            if (!Session.Transaction.IsActive)
+            if (Session.GetCurrentTransaction()?.IsActive != true)
                 Session.BeginTransaction();
         }
 
         public async Task CommitAsync()
         {
+            var currentTransaction = Session.GetCurrentTransaction();
+            
             try
             {
-                if (Session.Transaction.IsActive)
-                    await Session.Transaction.CommitAsync();
+                if (currentTransaction?.IsActive == true)
+                    await currentTransaction.CommitAsync();
             }
             catch
             {
-                if (Session.Transaction.IsActive)
-                    await Session.Transaction.RollbackAsync();
+                if (currentTransaction?.IsActive == true)
+                    await currentTransaction.RollbackAsync();
 
                 throw;
             }
@@ -36,10 +38,12 @@ namespace SokairykFramework.Repository
 
         public async Task RollbackAsync()
         {
+            var currentTransaction = Session.GetCurrentTransaction();
+            
             try
             {
-                if (Session.Transaction.IsActive)
-                    await Session.Transaction.RollbackAsync();
+                if (currentTransaction?.IsActive == true)
+                    await currentTransaction.RollbackAsync();
             }
             finally
             {

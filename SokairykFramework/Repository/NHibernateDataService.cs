@@ -36,7 +36,7 @@ namespace SokairykFramework.Repository
             }
         }
 
-        public NHibernateDataService(IConfigurationManager configurationManager)
+        protected NHibernateDataService(IConfigurationManager configurationManager)
         {
             _configurationManager = configurationManager;
             _sessionFactory = _sessionFactory ?? BuildSessionFactory();
@@ -62,7 +62,7 @@ namespace SokairykFramework.Repository
 
             await semaphoreSlim.WaitAsync();
 
-            if (_commonSession?.Transaction?.IsActive == true)
+            if (_commonSession?.GetCurrentTransaction()?.IsActive == true)
             {
                 semaphoreSlim.Release();
                 throw new Exception("An existing transaction is already in progress. Cannot execute action.");
