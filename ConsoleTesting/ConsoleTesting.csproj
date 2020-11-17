@@ -6,14 +6,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="log4net" Version="2.0.12" />
+      <PackageReference Include="log4net" Version="2.0.9" />
       <PackageReference Include="Unity" Version="5.11.7" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\CollectionManagementLib\CollectionManagementLib.csproj" />
       <ProjectReference Include="..\MusicManagementLib\MusicManagementLib.csproj" />
-      <ProjectReference Include="..\SokairykFramework.RepositoryImplementations\SokairykFramework.RepositoryImplementations.csproj" />
       <ProjectReference Include="..\SokairykFramework\SokairykFramework.csproj" />
     </ItemGroup>
 

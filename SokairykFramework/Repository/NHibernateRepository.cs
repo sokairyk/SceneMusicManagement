@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using NHibernate;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
-using NHibernate;
-using SokairykFramework.Repository;
 
-namespace SokairykFramework.RepositoryImplementations
+namespace SokairykFramework.Repository
 {
     public class NHibernateRepository : IRepository
     {
