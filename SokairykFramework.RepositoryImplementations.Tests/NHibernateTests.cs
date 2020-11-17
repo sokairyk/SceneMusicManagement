@@ -1,18 +1,17 @@
-﻿using NHibernate;
-using NHibernate.Cfg;
-using NHibernate.Dialect;
-using NHibernate.Mapping.ByCode;
-using NHibernate.Tool.hbm2ddl;
-using NUnit.Framework;
-using SokairykFramework.Configuration;
-using SokairykFramework.Repository;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NHibernate;
+using NHibernate.Dialect;
+using NHibernate.Mapping.ByCode;
+using NHibernate.Tool.hbm2ddl;
+using NUnit.Framework;
+using SokairykFramework.Configuration;
+using SokairykFramework.RepositoryImplementations.Tests.SampleClasses;
 
-namespace SokairykFramework.Tests.Repository
+namespace SokairykFramework.RepositoryImplementations.Tests
 {
     public class NhibernateRepositoryTests
     {
@@ -26,14 +25,14 @@ namespace SokairykFramework.Tests.Repository
                 File.Delete(_tempDBPath);
 
             var config = new NHibernate.Cfg.Configuration()
-                        .DataBaseIntegration(db =>
-                        {
-                            db.ConnectionString = $@"Data Source=""{_tempDBPath}"";Version=3;New=True;";
-                            db.Dialect<SQLiteDialect>();
-                        });
+                .DataBaseIntegration(db =>
+                {
+                    db.ConnectionString = $@"Data Source=""{_tempDBPath}"";Version=3;New=True;";
+                    db.Dialect<SQLiteDialect>();
+                });
 
             var mapper = new ModelMapper();
-            mapper.AddMappings(new Type[] { typeof(TestEntityMapping) });
+            mapper.AddMappings(new Type[] {typeof(TestEntityMapping)});
             config.AddMapping(mapper.CompileMappingForAllExplicitlyAddedEntities());
             _sessionFactory = config.BuildSessionFactory();
             //Create db schema
@@ -50,7 +49,6 @@ namespace SokairykFramework.Tests.Repository
             }
             catch
             {
-
             }
         }
 
@@ -70,45 +68,42 @@ namespace SokairykFramework.Tests.Repository
         public async Task UnitOfWorkTest()
         {
             var dataService = new TestDataService(null);
-            var newEntry = new TestEntity { Id = 1, TextField = "This is a test", PrecisionField = 56.31m };
-            var newEntry2 = new TestEntity { Id = 2, TextField = "This is another test" };
+            var newEntry = new NHibernateTestEntity {Id = 1, TextField = "This is a test", PrecisionField = 56.31m};
+            var newEntry2 = new NHibernateTestEntity {Id = 2, TextField = "This is another test"};
 
-            Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 0);
+            Assert.AreEqual(dataService.Repository.GetAll<NHibernateTestEntity>().Count(), 0);
 
             //With no transaction started there should be nothing to be commited
             await dataService.Repository.CreateAsync(newEntry);
             await dataService.UnitOfWork.CommitAsync();
-            Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 0);
+            Assert.AreEqual(dataService.Repository.GetAll<NHibernateTestEntity>().Count(), 0);
 
             //With proper use of begin / commit there should be no issue
             dataService.UnitOfWork.BeginTransaction();
             await dataService.Repository.CreateAsync(newEntry);
             await dataService.UnitOfWork.CommitAsync();
-            Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 1);
+            Assert.AreEqual(dataService.Repository.GetAll<NHibernateTestEntity>().Count(), 1);
 
             //After commit is executed nothing else should be persisted
             await dataService.Repository.DeleteAsync(newEntry);
             await dataService.UnitOfWork.CommitAsync();
-            Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 1);
+            Assert.AreEqual(dataService.Repository.GetAll<NHibernateTestEntity>().Count(), 1);
 
             //...until a new begin transaction is initiated
             dataService.UnitOfWork.BeginTransaction();
             await dataService.Repository.DeleteAsync(newEntry);
             await dataService.UnitOfWork.CommitAsync();
-            Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 0);
+            Assert.AreEqual(dataService.Repository.GetAll<NHibernateTestEntity>().Count(), 0);
 
             //Using ExecuteInUnitOfWork with an open transaction
             //in any thread should result in an exception
             dataService.UnitOfWork.BeginTransaction();
 
-            Action<TestEntity> executeInUnitOfWorkAction = async (TestEntity ent) =>
+            Action<NHibernateTestEntity> executeInUnitOfWorkAction = async (NHibernateTestEntity ent) =>
             {
                 try
                 {
-                    await dataService.ExecuteInUnitOfWorkAsync(async repository =>
-                    {
-                        await repository.CreateAsync(ent);
-                    });
+                    await dataService.ExecuteInUnitOfWorkAsync(async repository => { await repository.CreateAsync(ent); });
                     Assert.Fail("Should have raised an exception");
                 }
                 catch (Exception ex)
@@ -122,10 +117,7 @@ namespace SokairykFramework.Tests.Repository
             executeInUnitOfWorkAction(newEntry);
 
             //Worker thread Exception
-            var workerThread = new Thread(() =>
-            {
-                executeInUnitOfWorkAction(newEntry);
-            });
+            var workerThread = new Thread(() => { executeInUnitOfWorkAction(newEntry); });
             workerThread.Name = "Worker Thread";
             workerThread.Start();
             workerThread.Join();
@@ -134,14 +126,11 @@ namespace SokairykFramework.Tests.Repository
             //when needed
             await dataService.UnitOfWork.CommitAsync();
 
-            executeInUnitOfWorkAction = async (TestEntity ent) =>
+            executeInUnitOfWorkAction = async (NHibernateTestEntity ent) =>
             {
                 try
                 {
-                    await dataService.ExecuteInUnitOfWorkAsync(async repository =>
-                    {
-                        await repository.CreateAsync(ent);
-                    });
+                    await dataService.ExecuteInUnitOfWorkAsync(async repository => { await repository.CreateAsync(ent); });
                 }
                 catch (Exception ex)
                 {
@@ -172,7 +161,7 @@ namespace SokairykFramework.Tests.Repository
             workerThread.Join();
             slowerWorkerThread.Join();
 
-            Assert.AreEqual(dataService.Repository.GetAll<TestEntity>().Count(), 2);
+            Assert.AreEqual(dataService.Repository.GetAll<NHibernateTestEntity>().Count(), 2);
         }
     }
 }

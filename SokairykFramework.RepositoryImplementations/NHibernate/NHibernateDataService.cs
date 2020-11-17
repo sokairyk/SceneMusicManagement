@@ -1,13 +1,11 @@
-using NHibernate;
-using NHibernate.Mapping;
-using SokairykFramework.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using NHibernate;
+using SokairykFramework.Configuration;
+using SokairykFramework.Repository;
 
-namespace SokairykFramework.Repository
+namespace SokairykFramework.RepositoryImplementations
 {
     public abstract class NHibernateDataService : IDataService
     {

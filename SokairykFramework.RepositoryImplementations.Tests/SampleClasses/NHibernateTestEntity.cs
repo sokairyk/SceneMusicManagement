@@ -1,8 +1,8 @@
 ﻿using NHibernate.Mapping.ByCode.Conformist;
 
-namespace SokairykFramework.Tests.Repository
+namespace SokairykFramework.RepositoryImplementations.Tests.SampleClasses
 {
-    public class TestEntity
+    public class NHibernateTestEntity
     {
         public virtual int Id { get; set; }
         public virtual string TextField { get; set; }
@@ -10,7 +10,7 @@ namespace SokairykFramework.Tests.Repository
         public virtual decimal PrecisionField { get; set; }
     }
 
-    public class TestEntityMapping : ClassMapping<TestEntity>
+    public class TestEntityMapping : ClassMapping<NHibernateTestEntity>
     {
         public TestEntityMapping()
         {

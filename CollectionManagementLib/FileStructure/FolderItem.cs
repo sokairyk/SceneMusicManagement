@@ -6,6 +6,7 @@ namespace CollectionManagementLib.FileStructure
     public class FolderItem : BaseComposite
     {
         private bool? _exists = null;
+
         public override bool Exists
         {
             get
@@ -16,6 +17,7 @@ namespace CollectionManagementLib.FileStructure
         }
 
         private int? _totalItemsContained = null;
+
         public int TotalItemsContained
         {
             get
@@ -29,7 +31,6 @@ namespace CollectionManagementLib.FileStructure
 
         public FolderItem(string fullPath, BaseComposite parent) : base(fullPath, parent)
         {
-
         }
 
         public new void Refresh(bool recursive = false)

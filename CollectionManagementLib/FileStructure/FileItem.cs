@@ -9,6 +9,7 @@ namespace CollectionManagementLib.FileStructure
     {
         public override bool IsDirectory => false;
         private string _extension;
+
         public string Extension
         {
             get
@@ -18,9 +19,11 @@ namespace CollectionManagementLib.FileStructure
                 return _extension;
             }
         }
+
         private static readonly FileExtensionContentTypeProvider _contentProvider = new FileExtensionContentTypeProvider();
 
         private string _mimeType;
+
         public string MimeType
         {
             get
@@ -36,6 +39,7 @@ namespace CollectionManagementLib.FileStructure
         }
 
         private bool? _exists = null;
+
         public override bool Exists
         {
             get
@@ -47,7 +51,6 @@ namespace CollectionManagementLib.FileStructure
 
         public FileItem(string fullpath, BaseComposite parent) : base(fullpath, parent)
         {
-
         }
 
         public new void Refresh(bool recursive = false)

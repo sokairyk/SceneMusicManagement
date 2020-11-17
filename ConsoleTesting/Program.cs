@@ -5,8 +5,12 @@ using SokairykFramework.Configuration;
 using SokairykFramework.Diagnostics;
 using SokairykFramework.Repository;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
 namespace ConsoleTesting
@@ -22,16 +26,17 @@ namespace ConsoleTesting
             var collectionManager = di.ResolveInterface<IManager>();
             collectionManager.SetCollectionPath(configurationManager.GetApplicationSetting("MUSIC_SOURCE_PATH"));
 
-            var totalMs = StatisticsHelper.GetExecutionTimeElapsedMilliseconds(() => {
+            var totalMs = StatisticsHelper.GetExecutionTimeElapsedMilliseconds(() =>
+            {
                 collectionManager.GenerateStructure();
             });
             
-            TimeSpan t = TimeSpan.FromMilliseconds(totalMs);
+            var t = TimeSpan.FromMilliseconds(totalMs);
             string answer = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
-                                    t.Hours,
-                                    t.Minutes,
-                                    t.Seconds,
-                                    t.Milliseconds);
+                t.Hours,
+                t.Minutes,
+                t.Seconds,
+                t.Milliseconds);
             Console.WriteLine($"Generate structure {answer}");
             Console.ReadKey();
         }
