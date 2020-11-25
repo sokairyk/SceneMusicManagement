@@ -3,16 +3,18 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.1</TargetFramework>
+        <LangVersion>9</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="log4net" Version="2.0.9" />
-      <PackageReference Include="Unity" Version="5.11.7" />
+      <PackageReference Include="log4net" Version="2.0.12" />
+      <PackageReference Include="Unity" Version="5.11.9" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CollectionManagementLib\CollectionManagementLib.csproj" />
-      <ProjectReference Include="..\MusicManagementLib\MusicManagementLib.csproj" />
+      <ProjectReference Include="..\DiskFilesManagement\DiskFilesManagement.csproj" />
+      <ProjectReference Include="..\MediaPlayersDAL\MediaPlayersDAL.csproj" />
+      <ProjectReference Include="..\MusicManagement\MusicManagement.csproj" />
       <ProjectReference Include="..\SokairykFramework\SokairykFramework.csproj" />
     </ItemGroup>
 

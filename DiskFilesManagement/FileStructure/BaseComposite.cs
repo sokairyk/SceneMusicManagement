@@ -1,14 +1,13 @@
-﻿using Newtonsoft.Json;
-using NHibernate.Util;
-using SokairykFramework.Logger;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SokairykFramework.Logger;
 
-namespace CollectionManagementLib.FileStructure
+namespace DiskFilesManagement.FileStructure
 {
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class BaseComposite
@@ -17,20 +16,13 @@ namespace CollectionManagementLib.FileStructure
         private static readonly char[] _invalidFilenameChars = CustomInvalidChars();
         private static ParallelOptions _parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 4 };
 
-    public readonly string Name;
         [JsonProperty]
         public readonly string FullPath;
-        public virtual bool IsDirectory => true;
-        public abstract bool Exists { get; }
-        [JsonProperty]
-        public bool Scanned { get; set; }
-        [JsonProperty]
-        public DateTime? ScannedOn { get; set; }
+
+        public readonly string Name;
+
         [JsonProperty]
         public readonly BaseComposite Parent;
-        [JsonProperty]
-        protected List<BaseComposite> _children { get; set; }
-        public IEnumerable<BaseComposite> Children { get => _children?.AsReadOnly(); }
 
         public BaseComposite(string fullpath, BaseComposite parent, List<BaseComposite> children = null)
         {
@@ -42,6 +34,20 @@ namespace CollectionManagementLib.FileStructure
             Parent = parent;
             _children = children ?? (IsDirectory ? new List<BaseComposite>() : null);
         }
+
+        public virtual bool IsDirectory => true;
+        public abstract bool Exists { get; }
+
+        [JsonProperty]
+        public bool Scanned { get; set; }
+
+        [JsonProperty]
+        public DateTime? ScannedOn { get; set; }
+
+        [JsonProperty]
+        protected List<BaseComposite> _children { get; set; }
+
+        public IEnumerable<BaseComposite> Children => _children?.AsReadOnly();
 
         public void Scan(bool recursive = false)
         {
@@ -64,11 +70,11 @@ namespace CollectionManagementLib.FileStructure
                 //Check for duplicates, warn if necessary and skip
                 var sameFullPathChildren = Children.Where(c => c.FullPath == systemEntry);
                 if (sameFullPathChildren.Count() > 0
-                    && ((entryAttributes == FileAttributes.Directory
-                         && sameFullPathChildren.SingleOrDefault(c => c.FullPath == systemEntry && c.IsDirectory) != null)
-                      ||
-                        (entryAttributes != FileAttributes.Directory
-                         && sameFullPathChildren.SingleOrDefault(c => c.FullPath == systemEntry && !c.IsDirectory) != null)))
+                    && (entryAttributes == FileAttributes.Directory
+                        && sameFullPathChildren.SingleOrDefault(c => c.FullPath == systemEntry && c.IsDirectory) != null
+                        ||
+                        entryAttributes != FileAttributes.Directory
+                        && sameFullPathChildren.SingleOrDefault(c => c.FullPath == systemEntry && !c.IsDirectory) != null))
                 {
                     if (folderNotScannedOrEmpty)
                         _logger?.LogWarning($"Directory \"{Name}\" already contains a {(entryAttributes == FileAttributes.Directory ? "folder" : "file")} child entry: \"{systemEntry}\". This shouldn't happen... Ever... Skipping...");
@@ -79,12 +85,11 @@ namespace CollectionManagementLib.FileStructure
                 if ((entryAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                     _children.Add(new FolderItem(systemEntry, this));
                 else if ((entryAttributes & FileAttributes.Normal) == FileAttributes.Normal
-                        ||
-                        (entryAttributes & FileAttributes.Archive) == FileAttributes.Archive)
+                         ||
+                         (entryAttributes & FileAttributes.Archive) == FileAttributes.Archive)
                     _children.Add(new FileItem(systemEntry, this));
                 else
                     _logger?.LogWarning($"System item type \"{systemEntry}\" found in \"{FullPath}\" is not supported. Skipping...");
-
             }
 
             if (recursive) Parallel.ForEach(Children, _parallelOptions, c => { c.Scan(true); });
@@ -111,7 +116,7 @@ namespace CollectionManagementLib.FileStructure
             {
                 //Sanitize search input and apply regex match only for wildcards
                 var processedTerm = string.Join("", term.Split(_invalidFilenameChars, StringSplitOptions.RemoveEmptyEntries));
-                processedTerm = string.Join("[0-9a-zA-Z]*", processedTerm.Split("*", StringSplitOptions.None).Select(p => Regex.Escape(p)));
+                processedTerm = string.Join("[0-9a-zA-Z]*", processedTerm.Split("*").Select(p => Regex.Escape(p)));
 
                 var regexPattern = new Regex(processedTerm, RegexOptions.Compiled & RegexOptions.IgnoreCase);
                 Search(regexPattern, this, null, recursive).Select(r => results.Add(r));
@@ -126,7 +131,9 @@ namespace CollectionManagementLib.FileStructure
             results = results ?? new HashSet<BaseComposite>();
 
             if (!item.IsDirectory && pattern.IsMatch(item.Name))
+            {
                 results.Add(item);
+            }
             else
             {
                 item.Children.Where(c => pattern.IsMatch(c.Name)).Select(r => results.Add(r));

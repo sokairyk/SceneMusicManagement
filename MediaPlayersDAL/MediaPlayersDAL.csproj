@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <RootNamespace>MusicPlayersDAL</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MediaPlayersDAL.Interfaces\MediaPlayersDAL.Interfaces.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Clementine\Dapper" />
+      <Folder Include="Clementine\EntityFramework" />
+    </ItemGroup>
+
+</Project>

@@ -1,6 +1,4 @@
-﻿using CollectionManagementLib.Manager;
-using MusicManagementLib.DAL.ClementineDTO;
-using MusicManagementLib.Helpers;
+﻿using MusicManagementLib.Helpers;
 using SokairykFramework.Configuration;
 using SokairykFramework.Diagnostics;
 using SokairykFramework.Repository;
@@ -8,6 +6,9 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using DiskFilesManagement.Manager;
+using MusicPlayersDAL.DTO.Clementine;
+using MusicPlayersDAL.Repositories;
 
 namespace ConsoleTesting
 {
@@ -16,7 +17,10 @@ namespace ConsoleTesting
         private static void Main(string[] args)
         {
             var di = new DependencyInjectionManager();
-            var clementineService = di.ResolveInterface<IDataService>("Clementine");
+            var repo = di.ResolveInterface<IClementineRepository>();
+
+            var songs = repo.Repository.GetAll<ClementineSong>().Where(x => x.Album.ToLower().Contains("roboxai")).ToList();
+
             var configurationManager = di.ResolveInterface<IConfigurationManager>();
 
             var collectionManager = di.ResolveInterface<IManager>();

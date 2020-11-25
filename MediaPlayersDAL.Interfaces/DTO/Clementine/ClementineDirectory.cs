@@ -1,4 +1,4 @@
-﻿namespace MusicManagementLib.DAL.DTO
+﻿namespace MusicPlayersDAL.DTO.Clementine
 {
     public class ClementineDirectory
     {

@@ -3,17 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CollectionManagementLib", "CollectionManagementLib\CollectionManagementLib.csproj", "{ED025634-8C50-4E8D-87D6-3AE6547BEAFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiskFilesManagement", "DiskFilesManagement\DiskFilesManagement.csproj", "{ED025634-8C50-4E8D-87D6-3AE6547BEAFB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTesting", "ConsoleTesting\ConsoleTesting.csproj", "{842FE85D-8227-42AE-B809-ADE7C80EA681}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicManagementLib", "MusicManagementLib\MusicManagementLib.csproj", "{BC1DCC53-4025-4A09-91D9-95DC25C70A4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicManagement", "MusicManagement\MusicManagement.csproj", "{BC1DCC53-4025-4A09-91D9-95DC25C70A4F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SokairykFramework", "SokairykFramework\SokairykFramework.csproj", "{7B100378-4549-43FD-84D8-32E671F3F543}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SokairykFramework.Tests", "SokairykFramework.Tests\SokairykFramework.Tests.csproj", "{03AC7B6F-7659-4A2B-8F5F-4DDD8D984FD6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectionManagerGUI", "CollectionManagerGUI\CollectionManagerGUI.csproj", "{C5D35E72-3201-4030-A243-DFB6E947D971}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPlayersDAL.Interfaces", "MediaPlayersDAL.Interfaces\MediaPlayersDAL.Interfaces.csproj", "{A9AE6FBF-6A45-4807-93F5-E6EDB93D1503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPlayersDAL", "MediaPlayersDAL\MediaPlayersDAL.csproj", "{9715AB16-7821-481A-BCA0-F61FAE33D247}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 - Framework", "01 - Framework", "{4977704C-6018-41E4-B34F-00BF2D5B18AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 - Disk Files Management", "02 - Disk Files Management", "{7A9C2976-6829-4EF7-9497-9ABA0E5C9A99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 - Media Players", "03 - Media Players", "{3D0FE154-A449-44E3-AFE3-BC32AA6B62C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 - Collection Management", "04 - Collection Management", "{742EBC79-F1FC-4A99-B0E2-63CA1A1D17F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 - GUI", "05 - GUI", "{517DBB21-4A85-47B0-9EAE-1166A303037E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,11 +59,28 @@ Global
 		{C5D35E72-3201-4030-A243-DFB6E947D971}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5D35E72-3201-4030-A243-DFB6E947D971}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5D35E72-3201-4030-A243-DFB6E947D971}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9AE6FBF-6A45-4807-93F5-E6EDB93D1503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9AE6FBF-6A45-4807-93F5-E6EDB93D1503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9AE6FBF-6A45-4807-93F5-E6EDB93D1503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9AE6FBF-6A45-4807-93F5-E6EDB93D1503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9715AB16-7821-481A-BCA0-F61FAE33D247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9715AB16-7821-481A-BCA0-F61FAE33D247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9715AB16-7821-481A-BCA0-F61FAE33D247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9715AB16-7821-481A-BCA0-F61FAE33D247}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F8BF0065-6210-4469-A7E8-42B559A15F82}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7B100378-4549-43FD-84D8-32E671F3F543} = {4977704C-6018-41E4-B34F-00BF2D5B18AF}
+		{03AC7B6F-7659-4A2B-8F5F-4DDD8D984FD6} = {4977704C-6018-41E4-B34F-00BF2D5B18AF}
+		{ED025634-8C50-4E8D-87D6-3AE6547BEAFB} = {7A9C2976-6829-4EF7-9497-9ABA0E5C9A99}
+		{A9AE6FBF-6A45-4807-93F5-E6EDB93D1503} = {3D0FE154-A449-44E3-AFE3-BC32AA6B62C4}
+		{9715AB16-7821-481A-BCA0-F61FAE33D247} = {3D0FE154-A449-44E3-AFE3-BC32AA6B62C4}
+		{BC1DCC53-4025-4A09-91D9-95DC25C70A4F} = {742EBC79-F1FC-4A99-B0E2-63CA1A1D17F1}
+		{C5D35E72-3201-4030-A243-DFB6E947D971} = {517DBB21-4A85-47B0-9EAE-1166A303037E}
 	EndGlobalSection
 EndGlobal

@@ -1,15 +1,12 @@
-﻿using CollectionManagementLib.FileStructure;
-
-using SokairykFramework.Hashing;
-using SokairykFramework.Logger;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using DiskFilesManagement.FileStructure;
+using SokairykFramework.Hashing;
+using SokairykFramework.Logger;
 
-namespace CollectionManagementLib.Extensions
+namespace DiskFilesManagement.Extensions
 {
     public static class FolderItemExtensions
     {
@@ -37,6 +34,7 @@ namespace CollectionManagementLib.Extensions
                     foreach (var child in item.Children.Where(c => c is FolderItem))
                         response += $"{await GenerateHashAsync(child, hashChecker, recursive, innerFolderPathSegment + child.Name)}{Environment.NewLine}";
             }
+
             return response;
         }
 

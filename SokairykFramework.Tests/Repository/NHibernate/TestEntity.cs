@@ -1,6 +1,6 @@
 ﻿using NHibernate.Mapping.ByCode.Conformist;
 
-namespace SokairykFramework.Tests.Repository
+namespace SokairykFramework.Tests.NHibernateRepository
 {
     public class TestEntity
     {

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SokairykFramework.Diagnostics
@@ -26,14 +24,14 @@ namespace SokairykFramework.Diagnostics
             var counter = new Stopwatch();
             counter.Start();
             var asyncFuncTask = asyncFunc();
-            var asyncFuncMetricsTask = asyncFuncTask.ContinueWith((x) =>
+            var asyncFuncMetricsTask = asyncFuncTask.ContinueWith(x =>
             {
                 counter.Stop();
                 return counter.ElapsedMilliseconds;
             });
 
             await Task.WhenAll(asyncFuncTask, asyncFuncMetricsTask);
-            
+
             return asyncFuncMetricsTask.Result;
         }
     }

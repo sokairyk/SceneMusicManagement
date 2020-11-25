@@ -1,17 +1,18 @@
-﻿using NHibernate;
+﻿using System.Linq;
+using System.Reflection;
+using MusicPlayersDAL.Repositories;
+using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Mapping.ByCode;
 using SokairykFramework.Configuration;
 using SokairykFramework.Repository;
-using System.Linq;
-using System.Reflection;
 
-namespace MusicManagementLib.Repository
+namespace MediaPlayersDAL.Clementine
 {
-    public class ClementineService : NHibernateDataService
+    public class ClementineNHibernateRepository : NHibernateDataService, IClementineRepository
     {
-        public ClementineService(IConfigurationManager configurationManager) : base(configurationManager)
+        public ClementineNHibernateRepository(IConfigurationManager configurationManager) : base(configurationManager)
         {
 
         }
@@ -26,7 +27,7 @@ namespace MusicManagementLib.Repository
                         });
 
             var mapper = new ModelMapper();
-            mapper.AddMappings(Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => t.Namespace.EndsWith(".ClementineDTO")));
+            mapper.AddMappings(Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => t.Namespace.EndsWith(".NHibernate.ClementineClassMappings")));
             config.AddMapping(mapper.CompileMappingForAllExplicitlyAddedEntities());
             return config.BuildSessionFactory();
         }

@@ -1,12 +1,13 @@
-﻿using CollectionManagementLib;
-using CollectionManagementLib.Manager;
-using MusicManagementLib.Repository;
+﻿using AutoMapper;
+using CollectionManagementLib;
+using DiskFilesManagement.Manager;
+using MediaPlayersDAL.Clementine;
+using MusicPlayersDAL.Repositories;
 using SokairykFramework.AutoMapper;
 using SokairykFramework.Configuration;
 using SokairykFramework.DependencyInjection;
 using SokairykFramework.Hashing;
 using SokairykFramework.Logger;
-using SokairykFramework.Repository;
 using Unity;
 using Unity.Injection;
 using Unity.Lifetime;
@@ -17,13 +18,13 @@ namespace ConsoleTesting
     {
         protected override void RegisterInterfaces()
         {
-            _container.RegisterType<IConfigurationManager, ConfigurationManager>(new InjectionConstructor("appsettings.json"));
-            _container.RegisterType<IDataService, ClementineService>("Clementine");
-            _container.RegisterInstance(typeof(ILogger), Log4NetLogger.Instance);
-            _container.RegisterType<IHashInfoHandler, HashInfoHandlerSFV>();
-            _container.RegisterType<IHashCheck, HashCheckCRC>();
-            _container.RegisterType<IManager, CollectionManager>();
-            _container.RegisterFactory<AutoMapper.IMapper>(f => AutoMapperExtensions.CreateConfig().CreateMapper(), new SingletonLifetimeManager());
+            Container.RegisterType<IConfigurationManager, ConfigurationManager>(new InjectionConstructor("appsettings.json"));
+            Container.RegisterType<IClementineRepository, ClementineNHibernateRepository>();
+            Container.RegisterInstance(typeof(ILogger), Log4NetLogger.Instance);
+            Container.RegisterType<IHashInfoHandler, HashInfoHandlerSFV>();
+            Container.RegisterType<IHashCheck, HashCheckCRC>();
+            Container.RegisterType<IManager, CollectionManager>();
+            Container.RegisterFactory<IMapper>(f => AutoMapperExtensions.CreateConfig().CreateMapper(), new SingletonLifetimeManager());
         }
     }
 }

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <RootNamespace>MusicPlayersDAL</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SokairykFramework\SokairykFramework.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DTO" />
+    </ItemGroup>
+
+</Project>

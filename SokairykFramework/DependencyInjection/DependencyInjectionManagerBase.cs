@@ -1,35 +1,34 @@
-﻿using SokairykFramework.Configuration;
-using Unity;
+﻿using Unity;
 using Unity.Resolution;
 
 namespace SokairykFramework.DependencyInjection
 {
     public abstract class DependencyInjectionManagerBase
     {
-        protected IUnityContainer _container { get; private set; }
-
         public DependencyInjectionManagerBase()
         {
-            _container = new UnityContainer();
+            Container = new UnityContainer();
             RegisterInterfaces();
         }
 
-        public DependencyInjectionManagerBase(IUnityContainer container)
+        protected DependencyInjectionManagerBase(IUnityContainer container)
         {
-            _container = container ?? new UnityContainer();
+            Container = container ?? new UnityContainer();
             RegisterInterfaces();
         }
+
+        protected IUnityContainer Container { get; }
 
         protected abstract void RegisterInterfaces();
 
         public T ResolveInterface<T>(params ResolverOverride[] overrides)
         {
-            return _container.Resolve<T>(overrides);
+            return Container.Resolve<T>(overrides);
         }
 
         public T ResolveInterface<T>(string name, params ResolverOverride[] overrides)
         {
-            return _container.Resolve<T>(name, overrides);
+            return Container.Resolve<T>(name, overrides);
         }
     }
 }

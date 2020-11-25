@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace CollectionManagementLib.FileStructure
+namespace DiskFilesManagement.FileStructure
 {
     public class FolderItem : BaseComposite
     {
@@ -10,7 +10,7 @@ namespace CollectionManagementLib.FileStructure
         {
             get
             {
-                _exists = _exists ?? Directory.Exists(FullPath);
+                _exists ??= Directory.Exists(FullPath);
                 return _exists.Value;
             }
         }

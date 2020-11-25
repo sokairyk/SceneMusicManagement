@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using MusicManagementLib.DAL.ClementineDTO;
 using MusicManagementLib.Helpers;
 using SokairykFramework.AutoMapper;
 using SokairykFramework.Extensions;
 using System.IO;
+using MusicPlayersDAL.DTO.Clementine;
 
 namespace MusicManagementLib.Domain
 {
@@ -54,25 +54,25 @@ namespace MusicManagementLib.Domain
                     Compilation = 0,
                     Length = m.ID3Tag.DurationInSeconds * (uint)1000000000,
                     Bitrate = m.ID3Tag.BitRate,
-                    Samplerate = m.ID3Tag.SampleRate,
+                    SampleRate = m.ID3Tag.SampleRate,
                     Directory = 999,
                     Filename = m._filepath.ToHexString(),
-                    Mtime = m.FileInformation != null ? (long)m.FileInformation.LastWriteTimeUtc.ToUnixEpoch().TotalSeconds : 0,
-                    Ctime = m.FileInformation != null ? (long)m.FileInformation.CreationTimeUtc.ToUnixEpoch().TotalSeconds : 0,
+                    ModificationTime = m.FileInformation != null ? (long)m.FileInformation.LastWriteTimeUtc.ToUnixEpoch().TotalSeconds : 0,
+                    CreationTime = m.FileInformation != null ? (long)m.FileInformation.CreationTimeUtc.ToUnixEpoch().TotalSeconds : 0,
                     Filesize = m.FileInformation != null ? m.FileInformation.Length : 0,
                     Filetype = m.FileInformation != null 
                                ? EnumHelper.GetAudioTypeFromExtension(m.FileInformation.Extension).HasValue  
                                     ? (int)EnumHelper.GetAudioTypeFromExtension(m.FileInformation.Extension).Value.GetMusicLibraryFileTypeValue(MusicLibrary.Clementine)
                                     : 0
                                : 0,
-                    Lastplayed = -1,
+                    LastPlayed = -1,
                     Rating = -1,
                     ForcedCompilationOn = 1,
                     EffectiveCompilation = 1,
-                    EffectiveAlbumartist = m.Artist != null ? m.Artist.Name : "",
+                    EffectiveAlbumArtist = m.Artist != null ? m.Artist.Name : "",
                     Grouping = "",
-                    Originalyear = -1,
-                    EffectiveOriginalyear = -1
+                    OriginalYear = -1,
+                    EffectiveOriginalYear = -1
                 });
             }
         }

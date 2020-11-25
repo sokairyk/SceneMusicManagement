@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.StaticFiles;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.StaticFiles;
 
-namespace CollectionManagementLib.FileStructure
+namespace DiskFilesManagement.FileStructure
 {
     public class FileItem : BaseComposite
     {

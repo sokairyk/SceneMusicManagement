@@ -1,7 +1,4 @@
-﻿using CollectionManagementLib.FileStructure;
-using System.Threading.Tasks;
-
-namespace CollectionManagementLib.Manager
+﻿namespace DiskFilesManagement.Manager
 {
     public interface IManager
     {

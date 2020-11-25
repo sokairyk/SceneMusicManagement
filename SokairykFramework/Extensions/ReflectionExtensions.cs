@@ -7,7 +7,6 @@ using System.Runtime.Loader;
 
 namespace SokairykFramework.Extensions
 {
-
 #if NETCOREAPP3_1
     internal class InspectiveAssemblyLoadContext : AssemblyLoadContext
     {
@@ -19,7 +18,7 @@ namespace SokairykFramework.Extensions
     }
 #endif
 
-    public class ReflectionExtensions
+    public static class ReflectionExtensions
     {
         private static readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private static readonly string[] _assemblyExtensions = new[] { "dll", "exe" };
@@ -29,12 +28,11 @@ namespace SokairykFramework.Extensions
 
         private static IEnumerable<string> FindAllAssembliesNames(IEnumerable<string> paths = null, string filter = null, bool recursive = false)
         {
-            var searchPaths = new List<string>(paths ?? new string[] { });
-            searchPaths.Add(_baseDirectory);
+            var searchPaths = new List<string>(paths ?? new string[] { }) { _baseDirectory };
             return searchPaths.Distinct()
-                              .Where(p => Directory.Exists(p))
-                              .SelectMany(d => _assemblyExtensions.SelectMany(e => Directory.GetFiles(_baseDirectory, $"*{filter}*.{e}", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)))
-                              .Distinct();
+                .Where(Directory.Exists)
+                .SelectMany(d => _assemblyExtensions.SelectMany(e => Directory.GetFiles(_baseDirectory, $"*{filter}*.{e}", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)))
+                .Distinct();
         }
 
         public static IEnumerable<Type> FindTypeInAssemblies(Predicate<Type> predicate, IEnumerable<string> searchPaths = null, string filter = null, bool recursive = false)
@@ -50,7 +48,6 @@ namespace SokairykFramework.Extensions
                 {
                     try
                     {
-
 #if NETCOREAPP3_1
                         _inspectiveAssemblyLoadContext.LoadFromStream(filestream);
 #else
@@ -65,11 +62,17 @@ namespace SokairykFramework.Extensions
             }
 
             var matchedTypes = AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.IsDynamic)
-                                            .SelectMany(a => a.GetTypes().Where(t =>
-                                            {
-                                                try { return predicate(t); }
-                                                catch { return false; }
-                                            }));
+                .SelectMany(a => a.GetTypes().Where(t =>
+                {
+                    try
+                    {
+                        return predicate(t);
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }));
 
 #if NETCOREAPP3_1
             //TODO: Test this line by instantiating a resolved type after a context unload

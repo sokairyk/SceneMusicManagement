@@ -1,13 +1,10 @@
-using CollectionManagementLib.FileStructure;
+using System;
+using DiskFilesManagement.FileStructure;
 using Newtonsoft.Json;
 using SokairykFramework.Hashing;
 using SokairykFramework.Logger;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CollectionManagementLib.Manager
+namespace DiskFilesManagement.Manager
 {
     public class CollectionManager : IManager
     {
