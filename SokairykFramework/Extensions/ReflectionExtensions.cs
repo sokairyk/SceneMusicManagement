@@ -86,5 +86,21 @@ namespace SokairykFramework.Extensions
         {
             return types.Select(t => t.GetTypeInfo().Assembly.Location).Distinct();
         }
+
+        public static T GetPropertyValue<T>(this object instance, string propertyName)
+        {
+            var property = instance.GetType().GetProperty("Session");
+            return (T) property?.GetValue(instance, null);
+        }
+
+        public static string GetFriendlyTypeName(this object instance)
+        {
+            var type = instance is Type ? (Type)instance : instance.GetType();
+            var typeName = type.Name.IndexOf("`") > -1 ? type.Name.Substring(0, type.Name.IndexOf("`")) : type.Name;
+
+            return type.IsGenericType
+                ? $"{typeName}<{string.Join(", ", type.GenericTypeArguments.Select(t => t.GetFriendlyTypeName()))}>"
+                : typeName;
+        }
     }
 }

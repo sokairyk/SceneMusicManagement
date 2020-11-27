@@ -1,14 +1,14 @@
-﻿using MusicManagementLib.Helpers;
-using SokairykFramework.Configuration;
-using SokairykFramework.Diagnostics;
-using SokairykFramework.Repository;
-using System;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiskFilesManagement.Manager;
 using MusicPlayersDAL.DTO.Clementine;
 using MusicPlayersDAL.Repositories;
+using NHibernate.Linq;
+using SokairykFramework.Configuration;
+using SokairykFramework.Diagnostics;
+using SokairykFramework.Extensions;
 
 namespace ConsoleTesting
 {
@@ -19,23 +19,22 @@ namespace ConsoleTesting
             var di = new DependencyInjectionManager();
             var repo = di.ResolveInterface<IClementineRepository>();
 
-            var songs = repo.Repository.GetAll<ClementineSong>().Where(x => x.Album.ToLower().Contains("roboxai")).ToList();
+            var songsQuery = repo.Repository.GetAll<ClementineSong>().Where(x => x.Album.ToLower().Contains("roboxai"));
+            var check = songsQuery.AsQueryable().GetSQLStatement();
+            var songs = songsQuery.ToList();
 
             var configurationManager = di.ResolveInterface<IConfigurationManager>();
 
             var collectionManager = di.ResolveInterface<IManager>();
             collectionManager.SetCollectionPath(configurationManager.GetApplicationSetting("MUSIC_SOURCE_PATH"));
 
-            var totalMs = StatisticsHelper.GetExecutionTimeElapsedMilliseconds(() => {
+            var totalMs = StatisticsHelper.GetExecutionTimeElapsedMilliseconds(() =>
+            {
                 collectionManager.GenerateStructure();
             });
-            
-            TimeSpan t = TimeSpan.FromMilliseconds(totalMs);
-            string answer = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
-                                    t.Hours,
-                                    t.Minutes,
-                                    t.Seconds,
-                                    t.Milliseconds);
+
+            var t = TimeSpan.FromMilliseconds(totalMs);
+            var answer = $"{t.Hours:D2}h:{t.Minutes:D2}m:{t.Seconds:D2}s:{t.Milliseconds:D3}ms";
             Console.WriteLine($"Generate structure {answer}");
             Console.ReadKey();
         }
