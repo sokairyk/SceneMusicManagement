@@ -21,7 +21,7 @@ namespace ConsoleTesting
 
             var songsQuery = repo.Repository.GetAll<ClementineSong>().Where(x => x.Album.ToLower().Contains("roboxai"));
             var check = songsQuery.AsQueryable().GetSQLStatement();
-            var songs = songsQuery.ToList();
+            var songs = songsQuery.ToListAsync();
 
             var configurationManager = di.ResolveInterface<IConfigurationManager>();
 

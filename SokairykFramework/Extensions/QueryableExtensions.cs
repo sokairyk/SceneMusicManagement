@@ -1,9 +1,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using NHibernate;
-using NHibernate.Hql.Ast.ANTLR;
-using NHibernate.Linq;
 
 namespace SokairykFramework.Extensions
 {
@@ -12,13 +9,13 @@ namespace SokairykFramework.Extensions
         public static string GetSQLStatement(this IQueryable queryable)
         {
             //NHibernate
-            if (queryable.Provider is DefaultQueryProvider)
+            if (queryable.Provider is NHibernate.Linq.DefaultQueryProvider)
             {
-                var session = queryable.Provider.GetPropertyValue<ISession>("Session");
+                var session = queryable.Provider.GetPropertyValue<NHibernate.ISession>("Session");
                 var sessionImplementation = session.GetSessionImplementation();
 
-                var nhLinqExpression = new NhLinqExpression(queryable.Expression, sessionImplementation.Factory);
-                var translatorFactory = new ASTQueryTranslatorFactory();
+                var nhLinqExpression = new NHibernate.Linq.NhLinqExpression(queryable.Expression, sessionImplementation.Factory);
+                var translatorFactory = new NHibernate.Hql.Ast.ANTLR.ASTQueryTranslatorFactory();
                 var translator = translatorFactory.CreateQueryTranslators(nhLinqExpression, null, false, sessionImplementation.EnabledFilters, sessionImplementation.Factory).First();
 
                 var parameters = nhLinqExpression.ParameterValuesByName.ToDictionary(x => x.Key, x => x.Value.Item1);

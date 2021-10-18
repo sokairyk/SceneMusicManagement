@@ -7,7 +7,7 @@ using System.Runtime.Loader;
 
 namespace SokairykFramework.Extensions
 {
-#if NETCOREAPP3_1
+#if NET5_0
     internal class InspectiveAssemblyLoadContext : AssemblyLoadContext
     {
         public InspectiveAssemblyLoadContext() : base(isCollectible: true) { }
@@ -22,8 +22,8 @@ namespace SokairykFramework.Extensions
     {
         private static readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private static readonly string[] _assemblyExtensions = new[] { "dll", "exe" };
-#if NETCOREAPP3_1
-        private static readonly InspectiveAssemblyLoadContext _inspectiveAssemblyLoadContext = new InspectiveAssemblyLoadContext();
+#if NET5_0
+        private static InspectiveAssemblyLoadContext _inspectiveAssemblyLoadContext;
 #endif
 
         private static IEnumerable<string> FindAllAssembliesNames(IEnumerable<string> paths = null, string filter = null, bool recursive = false)
@@ -39,6 +39,9 @@ namespace SokairykFramework.Extensions
         {
             predicate = predicate ?? (a => { return false; });
 
+#if NET5_0
+            _inspectiveAssemblyLoadContext = new InspectiveAssemblyLoadContext();
+#endif
             foreach (var assemblyPath in FindAllAssembliesNames(searchPaths, filter, recursive))
             {
                 if (!File.Exists(assemblyPath)) continue; //This shouldn't happen....
@@ -48,7 +51,7 @@ namespace SokairykFramework.Extensions
                 {
                     try
                     {
-#if NETCOREAPP3_1
+#if NET5_0
                         _inspectiveAssemblyLoadContext.LoadFromStream(filestream);
 #else
                         AssemblyLoadContext.Default.LoadFromStream(filestream);
@@ -74,7 +77,7 @@ namespace SokairykFramework.Extensions
                     }
                 }));
 
-#if NETCOREAPP3_1
+#if NET5_0
             //TODO: Test this line by instantiating a resolved type after a context unload
             _inspectiveAssemblyLoadContext.Unload();
 #endif
@@ -90,7 +93,7 @@ namespace SokairykFramework.Extensions
         public static T GetPropertyValue<T>(this object instance, string propertyName)
         {
             var property = instance.GetType().GetProperty("Session");
-            return (T) property?.GetValue(instance, null);
+            return (T)property?.GetValue(instance, null);
         }
 
         public static string GetFriendlyTypeName(this object instance)

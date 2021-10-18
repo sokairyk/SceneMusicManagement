@@ -5,6 +5,8 @@ namespace SokairykFramework.DependencyInjection
 {
     public abstract class DependencyInjectionManagerBase
     {
+        protected IUnityContainer Container { get; }
+
         public DependencyInjectionManagerBase()
         {
             Container = new UnityContainer();
@@ -16,8 +18,6 @@ namespace SokairykFramework.DependencyInjection
             Container = container ?? new UnityContainer();
             RegisterInterfaces();
         }
-
-        protected IUnityContainer Container { get; }
 
         protected abstract void RegisterInterfaces();
 
