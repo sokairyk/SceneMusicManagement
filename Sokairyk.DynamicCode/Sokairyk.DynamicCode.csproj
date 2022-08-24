@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<!-- Packaging info -->
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageId>Sokairyk.DynamicCode</PackageId>
+		<Version>1.0.0</Version>
+		<Author>Sokairyk</Author>
+		<Description>Allows to compile and use C# code from text/string.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.2.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
+	</ItemGroup>
+
+	<!-- Local package deployment -->
+	<Target Name="CopyPackage" AfterTargets="Pack">
+		<Copy SourceFiles="$(OutputPath)../$(PackageId).$(PackageVersion).nupkg" DestinationFolder="../LocalPackageRepository" />
+	</Target>
+	<!-- Local cache package cleanup -->
+	<Target Name="CleanPackage" AfterTargets="AfterClean">
+		<RemoveDir Directories="../packages/$(PackageId)" />
+	</Target>
+
+</Project>

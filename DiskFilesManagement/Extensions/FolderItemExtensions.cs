@@ -1,21 +1,18 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using DiskFilesManagement.FileStructure;
-using SokairykFramework.Hashing;
-using SokairykFramework.Logger;
+﻿using DiskFilesManagement.FileStructureModels;
+using Microsoft.Extensions.Logging;
+using Sokairyk.Base.CustomAttributes;
+using Sokairyk.Hashing;
 
 namespace DiskFilesManagement.Extensions
 {
     public static class FolderItemExtensions
     {
-        public static async Task<string> GenerateHashAsync(this FolderItem folderItem, IHashCheck hashChecker, bool recursive = false)
+        public static async Task<string> GenerateHashAsync(this FolderItem folderItem, IHashChecker hashChecker, bool recursive = false)
         {
             return await GenerateHashAsync(folderItem, hashChecker, recursive, "");
         }
 
-        private static async Task<string> GenerateHashAsync(BaseComposite item, IHashCheck hashChecker, bool recursive = false, string innerFolderPathSegment = "")
+        private static async Task<string> GenerateHashAsync(BaseComposite item, IHashChecker hashChecker, bool recursive = false, string innerFolderPathSegment = "")
         {
             var response = string.Empty;
             innerFolderPathSegment = string.IsNullOrEmpty(innerFolderPathSegment) ? string.Empty : $"{innerFolderPathSegment}{Path.DirectorySeparatorChar}";
@@ -38,30 +35,31 @@ namespace DiskFilesManagement.Extensions
             return response;
         }
 
-        public static async Task<bool> ValidateAsync(this FolderItem folderItem, IHashCheck hashChecker, IHashInfoHandler hashInfoHandler, ILogger logger = null)
+        public static async Task<bool> ValidateAsync(this FolderItem folderItem, IHashChecker hashChecker, IHashInfoHandler hashInfoHandler, ILogger logger = null)
         {
-            var sfvFiles = folderItem.Search("*.sfv", true);
+            var hashFileExtension = hashChecker.HashAlgorithm.StringValue();
+            var hashContentFiles = folderItem.Search($"*.{hashFileExtension}", true);
             var validityCheck = true;
 
-            foreach (var sfvFile in sfvFiles)
+            foreach (var hashContentFile in hashContentFiles)
             {
-                var parentFolder = sfvFile.Parent;
+                var parentFolder = hashContentFile.Parent;
 
-                if (!hashInfoHandler.ValidateFile(sfvFile.FullPath))
+                if (!hashInfoHandler.ValidateFile(hashContentFile.FullPath))
                 {
-                    logger?.LogWarning($"SFV file in {sfvFile.FullPath} is invalid! Skipping....");
+                    logger?.LogWarning($"{hashFileExtension.ToUpper()} file in {hashContentFile.FullPath} is invalid! Skipping....");
                     continue;
                 }
 
-                var sfvInfo = hashInfoHandler.Parse(sfvFile.FullPath);
-                foreach (var sfvFileInfo in sfvInfo.Keys)
+                var hashInfo = hashInfoHandler.Parse(hashContentFile.FullPath);
+                foreach (var hashFileInfo in hashInfo.Keys)
                 {
-                    var properpath = Path.Combine(sfvFile.Parent.FullPath, sfvFileInfo);
+                    var properpath = Path.Combine(hashContentFile.Parent.FullPath, hashFileInfo);
 
-                    if (!await hashChecker.ValidateAsync(properpath, sfvInfo[sfvFileInfo]))
+                    if (!await hashChecker.ValidateAsync(properpath, hashInfo[hashFileInfo]))
                     {
-                        logger?.LogWarning($@"File {sfvFileInfo} has invalid CRC according to sfv file {sfvFile.FullPath}.
-Expected CRC: {sfvInfo[sfvFileInfo]} | Calculated CRC: {await hashChecker.GetHashAsync(sfvFileInfo)}");
+                        logger?.LogWarning($@"File {hashFileInfo} has invalid hash according to {hashFileExtension} file {hashContentFile.FullPath}.
+Expected {hashChecker.HashAlgorithm}: {hashInfo[hashFileInfo]} | Calculated {hashChecker.HashAlgorithm}: {await hashChecker.GetHashAsync(hashFileInfo)}");
                         validityCheck = false;
                     }
                 }
